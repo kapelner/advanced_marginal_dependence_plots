@@ -1,4 +1,8 @@
+library(amdp)
+library(randomForest)
+library(gbm)
 
+##Generates figures 1(a) through 1(c)
 
 n = 1000
 p = 2
@@ -17,33 +21,37 @@ for (i in 1 : n){
 	}
 }
 
-y = y + rnorm(n, 1)
+#y = y + rnorm(n, 1)
 
 Xy = as.data.frame(cbind(X, y))
 X = as.data.frame(X)
-lm_mod = lm(y ~ x_1 + x_2 + x_2 : x_3, Xy)
+lm_mod = lm(y ~ x_1 + x_2 + x_2 : x_3, data = Xy)
 summary(lm_mod)
 
+#Figure 1a
+lm_amdp_obj = amdp(lm_mod, as.data.frame(X), predictor = 2, frac_to_build = 1)
+plot.amdp(lm_amdp_obj, plot_pdp=T, pts_preds_size = 1.5, frac_to_plot = 0.1, color_by = 3)
 
-library(randomForest)
+
+
 rf_mod = randomForest(X, y)
 
-
-library(amdp)
-amdp_obj = amdp(rf_mod, X, y, predictor = 2, frac_to_build = 1)
+rf_amdp_obj = amdp(rf_mod, X, y, predictor = 2, frac_to_build = 1)
 
 #plot only 10% of curves with quantiles, actual pdp, and original points. 
 colorvec = array(NA, nrow(X))
 for (i in 1 : nrow(X)){
 	colorvec[i] = ifelse(X[i, 3] == 1, "red", "green")
 }
-plot(amdp_obj, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1, color_by = 3)
+
+#Figure 1b
+plot.amdp(rf_amdp_obj, x_quantile = F, plot_pdp = T, pts_preds_size = 1, frac_to_plot = 0.1, color_by = 3)
 windows()
-cluster.amdp(amdp_obj, nClusters = 2)
+
+#Figure 1c
+cluster_amdp(rf_amdp_obj, nClusters = 2)
 
 
-
-lm_amdp_obj = amdp(lm_mod, as.data.frame(X), predictor = 2, frac_to_build = 1)
 
 #plot only 10% of curves with quantiles, actual pdp, and original points. 
 colorvec = array(NA, nrow(X))
@@ -51,17 +59,16 @@ for (i in 1 : nrow(X)){
 	colorvec[i] = ifelse(X[i, 3] == 1, "red", "green")
 }
 windows()
-plot(lm_amdp_obj, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
+plot.amdp(lm_amdp_obj, x_quantile = F, pts_preds_size = 1, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
 windows()
-cls = cluster.amdp(lm_amdp_obj, nClusters = 2)
-
+cls = cluster_amdp(lm_amdp_obj, nClusters = 2)
 
 gbm_mod = gbm(y ~ ., data = Xy, n.tree = 500, interaction.depth = 3, shrinkage = 0.1, cv.folds = 5)
 ntree = gbm.perf(gbm_mod, method = "cv")
 summary(gbm_mod)
 
 amdp_obj_gbm = amdp(gbm_mod, X, predictor = 2, predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, frac_to_build = 1)
-plot(amdp_obj_gbm, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
+plot.amdp(amdp_obj_gbm, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
 
 
 #### Additive model; demonstrates cascade of colors, blue to black

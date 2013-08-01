@@ -1,4 +1,4 @@
-plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE,
+plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, pts_preds_size = 1.5,
 					colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = FALSE, plot_new_data = FALSE, 
 					centered = FALSE, rug = TRUE, prop_range_y = FALSE, centered_percentile = 0.05, ...){
 	
@@ -183,7 +183,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 		} else {
 			xj = amdp_obj$xj[plot_points_indices]
 		}
-		points(xj, yhat_actual, col = "black", pch = 16, cex = 1.5)
+		points(xj, yhat_actual, col = "black", pch = 16, cex = pts_preds_size)
 		points(xj, yhat_actual, col = colorvec, pch = 16)
 
 	}
