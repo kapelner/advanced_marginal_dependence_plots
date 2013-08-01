@@ -62,3 +62,23 @@ summary(gbm_mod)
 
 amdp_obj_gbm = amdp(gbm_mod, X, predictor = 2, predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, frac_to_build = 1)
 plot(amdp_obj_gbm, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
+
+
+#### Additive model; demonstrates cascade of colors, blue to black
+
+#library(amdp)
+#?amdp
+#setwd("C:/Users/pitkin/Hello-World/advanced_marginal_dependence_plots/amdp/R")
+#source("plot.amdp.R")
+
+num_pts = 50
+X1 = runif(num_pts, 0, 5)
+X2 = seq(0.1, num_pts/10, by = .1)
+Xmat = as.data.frame(cbind(X1, X2))
+y = X1 + 2*X2
+lm_mod = lm(y ~ X1 + X2, data = Xmat)
+
+j = 1
+lm_amdp_obj = amdp(object = lm_mod, X = Xmat, predictor = j, frac_to_build = 1)
+
+plot.amdp(lm_amdp_obj, frac_to_plot = 1, plot_orig_pts_preds=F, color_by = 2)
