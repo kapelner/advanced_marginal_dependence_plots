@@ -78,7 +78,7 @@ cluster_amdp = function(amdp_obj, nClusters, plot = TRUE, plot_margin = 0.05, co
 		if (plot_legend){
 			prop_data_in_clusters = round(cl$size / sum(cl$size), 2)
 			
-			legend("topleft", inset = 0.01, legend = as.character(prop_data_in_clusters), fill = colorvec, cex = 0.8)
+			legend("topleft", title = "Prop.", inset = 0.01, legend = as.character(prop_data_in_clusters), fill = colorvec, cex = 0.8)
 		}
 	}
 
