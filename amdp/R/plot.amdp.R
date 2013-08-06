@@ -146,7 +146,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 
 	#set xact if not passed explicitly
 	if( is.null(arg_list$xaxt) ){
-		ifelse(amdp_obj$nominal_axis, "n", "s")
+		xaxt = ifelse(amdp_obj$nominal_axis, "n", "s")
 	}
 
 	#set ylim if not passed explicitly
