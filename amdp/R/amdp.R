@@ -114,6 +114,7 @@ amdp = function(object, X, y,
 
 	#Compute actual pdp. Note that this is averaged over the observations
 	#we sample, so this might be different from the 'true' pdp if frac_to_build < 0.
+	xvec_temp = X[ ,predictor]  #actual setting of this column after ordering.
 	for (t in 1 : length(grid_pts) ){
 		X[, predictor] = grid_pts[t]
 		if (use_generic){
@@ -126,7 +127,7 @@ amdp = function(object, X, y,
 		if(verbose){cat(".")}			
 	}
 	#return X to its original state.
-	X[ ,predictor] = xj
+	X[ ,predictor] = xvec_temp
 
 	#do logit if necessary
 	if (logodds){
