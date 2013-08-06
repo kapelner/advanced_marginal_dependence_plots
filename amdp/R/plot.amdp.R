@@ -3,6 +3,10 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 					centered = FALSE, rug = TRUE, prop_range_y = FALSE, centered_percentile = 0.05, ...){
 	
 	DEFAULT_COLORVEC = c("forestgreen", "darkred", "brown", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
+
+	#list of passed arguments, including the ...
+	arg_list = as.list(match.call(expand.dots = TRUE))
+
 	#some argument checking
 	if (class(amdp_obj) != "amdp"){ 
 		stop("object is not of class 'amdp'")
@@ -123,27 +127,41 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	min_apdps = min_apdps - plot_margin * range_apdps
 	max_apdps = max_apdps + plot_margin * range_apdps
 
-	xlab = amdp_obj$xlab
+	#get the xlabel if it wasn't already passed explicitly.
+	if( is.null(arg_list$xlab)){
+		xlab = amdp_obj$xlab
+	}
 	if (x_quantile){
 		xlab = paste("quantile(", xlab, ")", sep = "")
 	}
 	
-	#plot all the prediction lines
-	if (amdp_obj$logodds){
-		ylab = "partial log-odds"
-	} else {
-		ylab = paste("partial yhat", ifelse(centered, "(centered)", ""))
+	#same for y label
+	if( is.null(arg_list$ylab)){	
+		if (amdp_obj$logodds){
+			ylab = "partial log-odds"
+		} else {
+			ylab = paste("partial yhat", ifelse(centered, "(centered)", ""))
+		}
 	}
+
+	#set xact if not passed explicitly
+	if( is.null(arg_list$xaxt) ){
+		ifelse(amdp_obj$nominal_axis, "n", "s")
+	}
+
+	#set ylim if not passed explicitly
+	if( is.null(arg_list$ylim) ){
+		ylim = c(min_apdps, max_apdps) 
+	}
+	
+	#plot all the prediction lines
 	plot(grid, apdps[1, ], 
 			type = "n", 
-			ylim = c(min_apdps, max_apdps), 
+			ylim = ylim, 
 			xlab = xlab, 
 			ylab = ylab, 
-			xaxt = ifelse(amdp_obj$nominal_axis, "n", "s"), 
+			xaxt = xaxt, 
 			...)
-	
-
-	
 	
 	if (amdp_obj$nominal_axis){
 		axis(1, at = sort(amdp_obj$xj), labels = sort(amdp_obj$xj))
@@ -191,8 +209,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	if (rug){
 		rug(amdp_obj$xj)	
 	}
-	
-	
+		
 	if (is.null(legend_text)){
 		invisible(list(plot_points_indices = plot_points_indices, legend_text = legend_text))
 	} else {
