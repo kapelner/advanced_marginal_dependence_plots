@@ -5,7 +5,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	DEFAULT_COLORVEC = c("forestgreen", "darkred", "brown", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
 
 	#list of passed arguments, including the ...
-	arg_list = as.list(match.call(expand.dots = TRUE))
+#	arg_list = as.list(match.call(expand.dots = TRUE))
 
 	#some argument checking
 	if (class(amdp_obj) != "amdp"){ 
@@ -127,47 +127,62 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	min_apdps = min_apdps - plot_margin * range_apdps
 	max_apdps = max_apdps + plot_margin * range_apdps
 
+  
+  arg_list = list(...)
+  #add the x and y values
+  arg_list = modifyList(arg_list, list(x = grid, y = apdps[1, ]))
+  
 	#get the xlabel if it wasn't already passed explicitly.
 	if( is.null(arg_list$xlab)){
 		xlab = amdp_obj$xlab
+    arg_list = modifyList(arg_list, list(xlab = xlab))
 	}
 	if (x_quantile){
 		xlab = paste("quantile(", xlab, ")", sep = "")
+		arg_list = modifyList(arg_list, list(xlab = xlab))
 	}
 	
 	#same for y label
 	if( is.null(arg_list$ylab)){	
 		if (amdp_obj$logodds){
 			ylab = "partial log-odds"
+			arg_list = modifyList(arg_list, list(ylab = ylab))
 		} else {
 			ylab = paste("partial yhat", ifelse(centered, "(centered)", ""))
+			arg_list = modifyList(arg_list, list(ylab = ylab))
 		}
 	}
 
-	#set xact if not passed explicitly
+	#set xact if not passed explicitly 
 	if( is.null(arg_list$xaxt) ){
 		xaxt = ifelse(amdp_obj$nominal_axis, "n", "s")
+		arg_list = modifyList(arg_list, list(xaxt = xaxt))
 	}
 
 	#set ylim if not passed explicitly
 	if( is.null(arg_list$ylim) ){
 		ylim = c(min_apdps, max_apdps) 
+		arg_list = modifyList(arg_list, list(ylim = ylim))
 	}
-	#set ylim if not passed explicitly
+	#set type if not passed explicitly
 	if( is.null(arg_list$type) ){
 		type = "n"
+		arg_list = modifyList(arg_list, list(type = type))
 	}
 
+  
 	
 	#plot all the prediction lines
-	plot(grid, apdps[1, ], 
-			type = type, 
-			ylim = ylim, 
-			xlab = xlab, 
-			ylab = ylab, 
-			xaxt = xaxt, 
-			...)
-	
+# 	plot(grid, apdps[1, ], 
+# 			type = type, 
+# 			ylim = ylim, 
+# 			xlab = xlab, 
+# 			ylab = ylab, 
+# 			xaxt = xaxt, 
+# 			...)
+	do.call("plot", arg_list)
+  
+  
 	if (amdp_obj$nominal_axis){
 		axis(1, at = sort(amdp_obj$xj), labels = sort(amdp_obj$xj))
 	}	

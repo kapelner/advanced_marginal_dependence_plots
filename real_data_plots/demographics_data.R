@@ -5,7 +5,7 @@ demo = income
 head(income)
 head(demo$INCOME)
 dim(demo)
-levels(demo$INCOME) = 1:9
+levels(demo$INCOME) = (1:9)*2
 demo$INCOME = as.numeric(as.character(demo$INCOME))
 levels(demo$AGE) = 1 : 7
 demo$AGE = as.numeric(as.character(demo$AGE))
