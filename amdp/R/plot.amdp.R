@@ -36,7 +36,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 		if (!missing(colorvec) && length(colorvec) < N){
 			stop("color vector has length ", length(colorvec), " but there are ", N, " lines to plot")
 		}
-		warning("Both colorvec and color_by_predictor are specified...using colorvec.")
+#		warning("Both colorvec and color_by_predictor are specified...using colorvec.")
 	}	
 	#case 3: colorvec missing but color_by is specified.
 	if(!missing(color_by) && missing(colorvec)){
@@ -229,6 +229,53 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	if (rug){
 		rug(amdp_obj$xj)	
 	}
+	
+	if (centered){
+		evt = setGraphicsEventHandlers(prompt = NULL,
+				onMouseDown = function(buttons, x, y){
+					#otherwise, get a point from the user					
+					x = locator(n = 1)$x				
+					
+					#make sure the user didn't click outside the bounds of xj
+					if (x > max(amdp_obj$xj)){
+						x = max(amdp_obj$xj)
+					} else if (x < min(amdp_obj$xj)){
+						x = min(amdp_obj$xj)
+					}			
+					
+					if (x_quantile){
+						x = x * (max(amdp_obj$xj) - min(amdp_obj$xj)) + min(amdp_obj$xj)
+					}
+					
+					pctile = sum(x > amdp_obj$xj) / length(amdp_obj$xj)
+					#make sure it's not outside the range of [0, 1]
+					pctile = min(0.999, max(0, pctile))
+				
+					
+					cat("x", x, "pctile", pctile)
+					plot(amdp_obj, 
+						plot_margin = plot_margin, 
+						frac_to_plot = frac_to_plot, 
+						plot_orig_pts_preds = plot_orig_pts_preds, 
+						pts_preds_size = pts_preds_size,
+						colorvec = colorvec,
+						color_by = color_by, 
+						x_quantile = x_quantile, 
+						plot_pdp = plot_pdp, 
+						plot_new_data = plot_new_data, 
+						centered = TRUE, 
+						rug = rug, 
+						prop_range_y = prop_range_y, 
+						centered_percentile = sum(x > amdp_obj$xj) / length(amdp_obj$xj), 
+						...)
+				}, 
+				onMouseMove = NULL,
+				onMouseUp = NULL, 
+				onKeybd = NULL,
+				consolePrompt = NULL)
+		
+		getGraphicsEvent()
+	}	
 		
 	if (is.null(legend_text)){
 		invisible(list(plot_points_indices = plot_points_indices, legend_text = legend_text))
