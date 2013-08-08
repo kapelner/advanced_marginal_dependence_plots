@@ -42,13 +42,13 @@ rf_amdp = amdp(object = rf, X = demo2[,-1], y = demo2[,1], predictor = "AGE")
 partialPlot(rf,pred.data=demo2[,-1],x.var="AGE")
 plot.amdp(rf_amdp,frac_to_plot=.01,plot_pdp=T,rug=T, xaxt = "s")
 plot.amdp(rf_amdp,frac_to_plot=.01,plot_pdp=T,rug=T, centered = T )
-cluster_amdp(amdp_obj=rf_amdp,nClusters=2, plot_legend=T)
+cluster.amdp(amdp_obj=rf_amdp,nClusters=2, plot_legend=T)
 
 
 rf_amdp2 = amdp(object = rf, X = demo2[,-1], y = demo2[,1], predictor = "EDUCATION")
 partialPlot(rf,pred.data=demo2[,-1],x.var="EDUCATION")
 par(mfrow = c(1,2))
 plot.amdp(rf_amdp2,frac_to_plot=.002,plot_pdp=T,rug=T)
-cluster_amdp(amdp_obj=rf_amdp2,nClusters=2, plot_legend = T)
+cluster.amdp(amdp_obj=rf_amdp2,nClusters=2, plot_legend = T)
 
 table(demo2$EDUCATION)

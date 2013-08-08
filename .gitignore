@@ -4,3 +4,4 @@
 .project
 install_instructions.txt
 *.Rcheck
+bin/*

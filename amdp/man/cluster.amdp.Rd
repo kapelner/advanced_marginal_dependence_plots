@@ -1,6 +1,5 @@
-\name{cluster.amdp}
-\alias{cluster.amdp}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{amdp_cluster}
+\alias{amdp_cluster}
 \title{
 Does clustering of an amdp object, plots it.
 }
@@ -8,7 +7,7 @@ Does clustering of an amdp object, plots it.
 Uses kmeans to do clustering on the rows of an amdp object and makes a plot.
 }
 \usage{
-cluster(apdp_obj, nClusters, plot = TRUE, plot_margin = 0.05, colorvec, plot_pdp=FALSE,
+amdpCluster(apdp_obj, nClusters, plot = TRUE, plot_margin = 0.05, colorvec, plot_pdp=FALSE,
 			x_quantile = FALSE, avg_lwd = 3, ...)
 }
 \arguments{
@@ -38,19 +37,6 @@ If TRUE, plot the partial dependence plot in black with extra thickness in addit
 \item{avg_lwd}{
 Average line width of the curves corresponding to each cluster. The thickness is
 proportional to the number of observations in each cluster.
-}
-  \item{rug}{
-	Draw rugged lines on the x-axis representing the distribution of \code{X[, j]}.
-}
-\item{prop_range_y}{
-Make a second y-axis on the right with the proportional change in the range of the response variable.
-No effect if it's a non-centered plot.
-}
-\item{centered}{
-Join the clusters together at the minimum of \code{X[, j]} and call this point 0.
-}
-\item{plot_legend}{
-If true, this prints a legend in the top left of the plot showing the proportion of the data in the \code{nCluster} clusters.
 }
 \item{\dots}{
 	Additional arguments, for example arguments to the \code{kmeans} routine.

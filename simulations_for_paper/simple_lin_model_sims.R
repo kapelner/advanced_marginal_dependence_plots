@@ -49,7 +49,7 @@ plot.amdp(rf_amdp_obj, x_quantile = F, plot_pdp = T, pts_preds_size = 1, frac_to
 windows()
 
 #Figure 1c
-cluster_amdp(rf_amdp_obj, nClusters = 2)
+cluster.amdp(rf_amdp_obj, nClusters = 2)
 
 
 
@@ -61,7 +61,7 @@ for (i in 1 : nrow(X)){
 windows()
 plot.amdp(lm_amdp_obj, x_quantile = F, pts_preds_size = 1, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
 windows()
-cls = cluster_amdp(lm_amdp_obj, nClusters = 2)
+cls = cluster.amdp(lm_amdp_obj, nClusters = 2)
 
 gbm_mod = gbm(y ~ ., data = Xy, n.tree = 500, interaction.depth = 3, shrinkage = 0.1, cv.folds = 5)
 ntree = gbm.perf(gbm_mod, method = "cv")
