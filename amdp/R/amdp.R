@@ -75,10 +75,12 @@ amdp = function(object, X, y,
 		order_xj = order(xj) 
 	    #order the remaining by column xj
 	    X = X[order_xj, ]  #ordered by column xj 	
-		grid_pts = sort(xj)		
+		grid_pts = sort(xj)
+		xj = X[, predictor]		
 	  }#end if for indices checking.
 	  else{ #3: nothing specified, so just re-order by xj
 		X = X[order(xj), ]
+		xj = X[, predictor]
 	  }	
 	}
 	grid_pts = unique(grid_pts)
