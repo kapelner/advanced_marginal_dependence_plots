@@ -7,3 +7,5 @@ Author: Somebody
 Maintainer: Who to complain to <yourfault@somewhere.net>
 Description: It is cool. You shoudl use it.
 License: whatevs
+Depends: sfsmisc
+Suggests: mlbench, gbm, randomForest, nnet
