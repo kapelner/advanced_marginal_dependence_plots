@@ -180,8 +180,12 @@ amdp = function(object, X, y,
 		cat("y not passed, so range_y is range of amdps\n")
 	}
 
+	#compute friedman's pdp:
+	pdp = apply(apdps, 2, mean) # pdp = average over the columns
+
 	amdp_obj = list(apdps = apdps, gridpts = grid_pts, predictor = predictor, xj = xj, actual_prediction = actual_predictions, 
-			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp=X)
+			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp=X,
+			pdp = pdp)
 	class(amdp_obj) = "amdp"
 	
 	if (plot){	#if the user wants to use a default plotting, they can get the plot in one line
