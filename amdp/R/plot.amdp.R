@@ -202,7 +202,8 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	#if plot_pdp is true, plot actual pdp (in the sense of Friedman '01)
 	if (plot_pdp){
 		#compute them!
-		friedman_pdp = apply(apdps, 2, mean) # pdp = average over the columns
+		#friedman_pdp = apply(apdps, 2, mean) # pdp = average over the columns
+	    friedman_pdp = amdp_obj$pdp
 		
 		#calculate the line thickness based on how many lines there are
 		num_lines = length(plot_points_indices)
