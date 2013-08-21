@@ -48,9 +48,10 @@ amdp = function(object, X, y,
 	# grid points
 	#now create xj-to-predict values
 	xj = X[, predictor]  #fix so predictor can be given as a name. 
-	grid_pts = sort(X[, predictor])
-	
-	# check fraction to build
+	grid_pts = sort(X[, predictor])	
+
+	# there are 3 cases: frac_to_build specificed, indices specified, or nothing specified.
+	# 1: check fraction to build
 	if (frac_to_build < 1){
 		# we don't sample randomly -- we ensure uniform sampling across
 		# quantiles of xj so as to not leave out portions of the dist'n of x.
@@ -60,15 +61,26 @@ amdp = function(object, X, y,
 		X = X[seq(1, N, by = nskip), ]
 		xj = X[, predictor]
 		grid_pts = sort(xj)
-	} else if (!missing(indices_to_build)){
+	} else{ 
+
+	  #2: indices specified:
+	  if (!missing(indices_to_build)){
+	  	#extract the indicies the user asks for first, THEN order the remaining
+	  	#X matrix by the xj's left in the sub-sample defined by the user.
 		if (frac_to_build < 1){
 			stop("\"frac_to_build\" and \"indices_to_build\" cannot both be specified simultaneously")
 		}
 		X = X[indices_to_build, ]
 		xj = X[, predictor]
+		order_xj = order(xj) 
+	    #order the remaining by column xj
+	    X = X[order_xj, ]  #ordered by column xj 	
 		grid_pts = sort(xj)		
+	  }#end if for indices checking.
+	  else{ #3: nothing specified, so just re-order by xj
+		X = X[order(xj), ]
+	  }	
 	}
-	
 	grid_pts = unique(grid_pts)
 	num_unique_pts = length(grid_pts)
 	
