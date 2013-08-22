@@ -1,4 +1,4 @@
-damdp = function(amdp_obj, DerivEstimator = NULL, plot = FALSE){
+damdp = function(amdp_obj, DerivEstimator, plot = FALSE){
 
 	#error checking:
 	if(class(amdp_obj) != "amdp"){
@@ -7,18 +7,23 @@ damdp = function(amdp_obj, DerivEstimator = NULL, plot = FALSE){
 
 	gridpts = amdp_obj$gridpts
 
-	if(is.null(DerivEstimator)){
-		DerivEstimator = function(y){
-			D1ss(x = gridpts, y=y, xout = gridpts, spar.offset = 0, spl.spar=NULL)	
+	if(!missing(DerivEstimator)){
+		EstimatorWrapper = function(y){
+			D1tr( x = gridpts, y = supsmu(x=gridpts,y=y)$y)
+		}
+	}else{
+		#argument checking???
+		EstimatorWrapper = function(y){
+			DerivEstimator(y=y,x=gridpts)		
 		}
 	}
 
 	#compute derivatives
 	damdp_obj = amdp_obj
-	damdp_obj$apdps = t(apply(amdp_obj$apdps, 1, FUN = DerivEstimator))
+	damdp_obj$apdps = t(apply(amdp_obj$apdps, 1, FUN = EstimatorWrapper))
 
 	#do it for the pdp as well.
-	damdp_obj$dpdp = DerivEstimator(amdp_obj$pdp)
+	damdp_obj$dpdp = EstimatorWrapper(amdp_obj$pdp)
 
 	#figure out point on each curve that corresponds to observed X.
     col_idx_of_actual = c(1, 1 + cumsum(diff(amdp_obj$xj)>0))
@@ -29,11 +34,9 @@ damdp = function(amdp_obj, DerivEstimator = NULL, plot = FALSE){
 	#clean up, make it of class 'damdp'	
 	damdp_obj$actual_prediction = NULL
 	class(damdp_obj) = "damdp"
-
 	
 	if (plot){	#if the user wants to use a default plotting, they can get the plot in one line
 		plot(damdp_obj)
 	}
 	invisible(damdp_obj)
 }
-
