@@ -31,6 +31,9 @@ damdp = function(amdp_obj, DerivEstimator, plot = FALSE){
 	actual_deriv_idx = cbind(row_idx, col_idx_of_actual)
 	damdp_obj$actual_deriv = damdp_obj$apdps[actual_deriv_idx]
 
+	#compute the sd of the derivatives at each gridpt.
+	damdp_obj$sd_deriv = apply(damdp_obj$apdps, 2, sd)
+	
 	#clean up, make it of class 'damdp'	
 	damdp_obj$actual_prediction = NULL
 	class(damdp_obj) = "damdp"
