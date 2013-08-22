@@ -1,8 +1,9 @@
-plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = TRUE, plot_orig_pts_deriv = TRUE, pts_preds_size = 1,
-					colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = FALSE, plot_new_data = FALSE, 
+plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = FALSE, plot_orig_pts_deriv = TRUE,
+ 						pts_preds_size = 1,colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = FALSE, plot_new_data = FALSE, 
 					rug = TRUE, prop_range_y = FALSE, ...){
 	
 	DEFAULT_COLORVEC = c("forestgreen", "darkred", "brown", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
+	arg_list = list(...)
 
 	#list of passed arguments, including the ...
 #	arg_list = as.list(match.call(expand.dots = TRUE))
@@ -14,6 +15,10 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 	if (frac_to_plot <= 0 || frac_to_plot > 1 ){
 		stop("frac_to_plot must be in (0,1]")
 	}
+	if(!is.null(arg_list$ylim) && plot_sd == TRUE){
+		stop("Cannot specify both ylim and plot_sd=TRUE.")
+	}
+	
 	#extract the grid and lines to plot	
 	grid = damdp_obj$gridpts 
 	n_grid = length(grid)
@@ -123,8 +128,6 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 	min_apdps = min_apdps - plot_margin * range_apdps
 	max_apdps = max_apdps + plot_margin * range_apdps
 
-  
-   arg_list = list(...)
    #add the x and y values
    arg_list = modifyList(arg_list, list(x = grid, y = apdps[1, ]))
   
@@ -144,7 +147,7 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 			ylab = "partial log-odds"
 			arg_list = modifyList(arg_list, list(ylab = ylab))
 		} else {
-			ylab = "f-hat'"
+			ylab = "derivative f-hat"
 			arg_list = modifyList(arg_list, list(ylab = ylab))
 		}
 	}
@@ -157,7 +160,12 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 
 	#set ylim if not passed explicitly
 	if( is.null(arg_list$ylim) ){
-		ylim = c(min_apdps, max_apdps) 
+		if(plot_sd){
+			offset = 1.5 * max(damdp_obj$sd_deriv)
+			ylim = c(min_apdps - offset, max_apdps)	
+		}else{
+			ylim = c(min_apdps, max_apdps) 
+		}
 		arg_list = modifyList(arg_list, list(ylim = ylim))
 	}
 	#set type if not passed explicitly
@@ -166,8 +174,7 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		arg_list = modifyList(arg_list, list(type = type))
 	}
 
-  
-	#plot all the prediction lines
+  	#plot all the prediction lines
 	# 	plot(grid, apdps[1, ], 
 	# 			type = type, 
 	# 			ylim = ylim, 
@@ -178,10 +185,6 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 
 	## if plot_sd = TRUE, set up the layout to have
     ## the dpdp above and the sd plot below.
-	if(plot_sd){
-		double_layout = layout(matrix(c(1,2),nrow=2,ncol=1),heights=c(3,1))		
-	}	
-
 	do.call("plot", arg_list)
   
   
@@ -212,8 +215,8 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		} else {
 			xj = damdp_obj$xj[plot_points_indices]
 		}
-		points(xj, deriv_actual, col = "black", pch = 14, cex = pts_preds_size)
-		points(xj, deriv_actual, col = colorvec, pch = 14)
+		points(xj, deriv_actual, col = "black", pch = 16, cex = pts_preds_size)
+		points(xj, deriv_actual, col = colorvec, pch = 16)
 	}
 	
 	if (rug){
@@ -222,7 +225,14 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 
 	#do the sd plot if required.
 	if(plot_sd){
-		plot(x=xj, y = damdp_obj$deriv_sd, type="l")	
+		abline(h = ylim[1] + offset, col = rgb(0.8,0.8,0.8))
+		at = seq(ylim[1], ylim[1] + max(damdp_obj$sd_deriv), length.out = 2)	
+		#labels = round(at / amdp_obj$range_y, 2)
+		labels = round(seq(0, max(damdp_obj$sd_deriv), length.out = 2), 2)
+		axis(4, at = at, labels = labels)
+		mtext("sd(deriv)", side = 4,line = 0.5)
+
+		points(x=damdp_obj$xj, y = (damdp_obj$sd_deriv+ylim[1]),type='l')
 	}
 		
 	if (is.null(legend_text)){
