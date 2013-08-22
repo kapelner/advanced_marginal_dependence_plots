@@ -232,7 +232,7 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		axis(4, at = at, labels = labels)
 		mtext("sd(deriv)", side = 4,line = 0.5)
 
-		points(x=damdp_obj$xj, y = (damdp_obj$sd_deriv+ylim[1]),type='l')
+		points(x= grid, y = (damdp_obj$sd_deriv+ylim[1]),type='l')
 	}
 		
 	if (is.null(legend_text)){
