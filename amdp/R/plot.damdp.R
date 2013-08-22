@@ -1,4 +1,4 @@
-plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_deriv = TRUE, pts_preds_size = 1,
+plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = TRUE, plot_orig_pts_deriv = TRUE, pts_preds_size = 1,
 					colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = FALSE, plot_new_data = FALSE, 
 					rug = TRUE, prop_range_y = FALSE, ...){
 	
@@ -124,14 +124,14 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig
 	max_apdps = max_apdps + plot_margin * range_apdps
 
   
-  arg_list = list(...)
-  #add the x and y values
-  arg_list = modifyList(arg_list, list(x = grid, y = apdps[1, ]))
+   arg_list = list(...)
+   #add the x and y values
+   arg_list = modifyList(arg_list, list(x = grid, y = apdps[1, ]))
   
 	#get the xlabel if it wasn't already passed explicitly.
 	if( is.null(arg_list$xlab)){
 		xlab = damdp_obj$xlab
-    arg_list = modifyList(arg_list, list(xlab = xlab))
+   		 arg_list = modifyList(arg_list, list(xlab = xlab))
 	}
 	if (x_quantile){
 		xlab = paste("quantile(", xlab, ")", sep = "")
@@ -167,14 +167,21 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig
 	}
 
   
-#plot all the prediction lines
-# 	plot(grid, apdps[1, ], 
-# 			type = type, 
-# 			ylim = ylim, 
-# 			xlab = xlab, 
-# 			ylab = ylab, 
-# 			xaxt = xaxt, 
-# 			...)
+	#plot all the prediction lines
+	# 	plot(grid, apdps[1, ], 
+	# 			type = type, 
+	# 			ylim = ylim, 
+	# 			xlab = xlab, 
+	# 			ylab = ylab, 
+	# 			xaxt = xaxt, 
+	# 			...)
+
+	## if plot_sd = TRUE, set up the layout to have
+    ## the dpdp above and the sd plot below.
+	if(plot_sd){
+		double_layout = layout(matrix(c(1,2),nrow=2,ncol=1),heights=c(3,1))		
+	}	
+
 	do.call("plot", arg_list)
   
   
@@ -186,13 +193,14 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig
 		points(grid, apdps[i, ], col = colorvec[i], type = "l")
 	}
 
-	#if plot_dpdp is true, plot actual pdp (in the sense of Friedman '01)
+	#if plot_dpdp is true, plot actual dpdp (in the sense of Friedman '01)
 	if (plot_dpdp){
 		friedman_dpdp = damdp_obj$dpdp
 		
 		#calculate the line thickness based on how many lines there are
 		num_lines = length(plot_points_indices)
-		points(grid, friedman_dpdp, col = "yellow", type = "l", lwd = min(5.5 + (num_lines / 100) * 0.75, 8)) #every 100 lines we get 0.5 more highlight up to 8
+		#every 100 lines we get 0.5 more highlight up to 8
+		points(grid, friedman_dpdp, col = "yellow", type = "l", lwd = min(5.5 + (num_lines / 100) * 0.75, 8)) 
 		points(grid, friedman_dpdp, col = "BLACK", type = "l", lwd = 4)
 	}
 
@@ -204,12 +212,17 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig
 		} else {
 			xj = damdp_obj$xj[plot_points_indices]
 		}
-		points(xj, deriv_actual, col = "black", pch = 16, cex = pts_preds_size)
-		points(xj, deriv_actual, col = colorvec, pch = 16)
+		points(xj, deriv_actual, col = "black", pch = 14, cex = pts_preds_size)
+		points(xj, deriv_actual, col = colorvec, pch = 14)
 	}
 	
 	if (rug){
 		rug(damdp_obj$xj)	
+	}
+
+	#do the sd plot if required.
+	if(plot_sd){
+		plot(x=xj, y = damdp_obj$deriv_sd, type="l")	
 	}
 		
 	if (is.null(legend_text)){
