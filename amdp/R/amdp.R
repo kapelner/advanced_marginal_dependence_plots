@@ -14,6 +14,10 @@ amdp = function(object, X, y,
 	if(!is.numeric(frac_to_build) || frac_to_build > 1 || frac_to_build < 0 ){
 		stop("frac_to_build must be in (0, 1]")
 	}
+  
+  if(!missing(y) & class(y) == "factor"){
+    stop("Do not pass y when it is categorical variable.")
+  }
 
 	######## (1) check inputs
 	# (a) check for valid prediction routine...
@@ -173,7 +177,7 @@ amdp = function(object, X, y,
 		nominal_axis = FALSE
 	}	
 
-	if(!missing(y)){
+	if(!missing(y) ){
 		range_y = max(y) - min(y)
 	}else{
 		range_y = (max(apdps) - min(apdps))
