@@ -56,22 +56,22 @@ for (j in colnames(X)){
 par(mfrow = c(1, 3))
 j = "age"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, x_quantile = FALSE, color_by = "nox", plot_pdp = T)
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = 0.02, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
 cluster.amdp(amdb_bart_objs[[j]], nClusters = 2, prop_range_y = TRUE, centered = TRUE, plot_legend = TRUE)
 
 j = "rm"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, color_by = "lstat", plot_pdp = T)
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = 0.02, prop_range_y = TRUE, plot_orig_pts_preds = FALSE, color_by = "lstat")
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, plot_orig_pts_preds = FALSE, color_by = "lstat")
 cluster.amdp(amdb_bart_objs[[j]], nClusters = 2, prop_range_y = TRUE, centered = TRUE, plot_legend = TRUE)
 
 j = "chas"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, color_by = "tax", plot_pdp = T)
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = 0.02, prop_range_y = TRUE, plot_orig_pts_preds = FALSE, color_by = "tax")
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, plot_orig_pts_preds = FALSE, color_by = "tax")
 cluster.amdp(amdb_bart_objs[[j]], nClusters = 2, prop_range_y = TRUE, centered = TRUE, plot_legend = TRUE)
 
 j = "black"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, plot_pdp = T)
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = 0.02, prop_range_y = TRUE, plot_orig_pts_preds = FALSE)
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, plot_orig_pts_preds = FALSE)
 cluster.amdp(amdb_bart_objs[[j]], nClusters = 2, prop_range_y = TRUE, centered = TRUE, plot_legend = TRUE)
 
 

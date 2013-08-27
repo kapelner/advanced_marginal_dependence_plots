@@ -1,6 +1,6 @@
 plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, pts_preds_size = 1.5,
-					colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = FALSE, plot_new_data = FALSE, 
-					centered = FALSE, rug = TRUE, prop_range_y = FALSE, centered_percentile = 0.05, ...){
+					colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = TRUE, plot_new_data = FALSE, 
+					centered = FALSE, rug = TRUE, prop_range_y = FALSE, centered_percentile = 0.01, ...){
 	
 	DEFAULT_COLORVEC = c("forestgreen", "darkred", "brown", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
 
@@ -9,7 +9,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 
 	#some argument checking
 	if (class(amdp_obj) != "amdp"){ 
-		stop("object is not of class 'amdp'")
+		stop("object is not of class \"amdp\"")
 	}
 	if (frac_to_plot <= 0 || frac_to_plot > 1 ){
 		stop("frac_to_plot must be in (0,1]")
@@ -32,14 +32,14 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 		colorvec = sort(rgb(runif(N, 0, 0.7), runif(N, 0, 0.7), runif(N, 0, 0.7)))
 	} 
 	#case 2: both colorvec and color_by specified, so print a warning but use colorvec.
-	if(!missing(colorvec) && !missing(color_by)){
+	if (!missing(colorvec) && !missing(color_by)){
 		if (!missing(colorvec) && length(colorvec) < N){
 			stop("color vector has length ", length(colorvec), " but there are ", N, " lines to plot")
 		}
 #		warning("Both colorvec and color_by_predictor are specified...using colorvec.")
 	}	
 	#case 3: colorvec missing but color_by is specified.
-	if(!missing(color_by) && missing(colorvec)){
+	if (!missing(color_by) && missing(colorvec)){
 		#argument checking first:
 		arg_type = class(color_by)
 		if(!(arg_type %in% c("character", "numeric"))){
@@ -160,12 +160,12 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	}
 
 	#set ylim if not passed explicitly
-	if( is.null(arg_list$ylim) ){
+	if (is.null(arg_list$ylim)){
 		ylim = c(min_apdps, max_apdps) 
 		arg_list = modifyList(arg_list, list(ylim = ylim))
 	}
 	#set type if not passed explicitly
-	if( is.null(arg_list$type) ){
+	if (is.null(arg_list$type)){
 		type = "n"
 		arg_list = modifyList(arg_list, list(type = type))
 	}
@@ -173,13 +173,6 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
   
 	
 	#plot all the prediction lines
-# 	plot(grid, apdps[1, ], 
-# 			type = type, 
-# 			ylim = ylim, 
-# 			xlab = xlab, 
-# 			ylab = ylab, 
-# 			xaxt = xaxt, 
-# 			...)
 	do.call("plot", arg_list)
   
   
@@ -200,9 +193,8 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	}
 
 	#if plot_pdp is true, plot actual pdp (in the sense of Friedman '01)
+	#Ensure this is done after the lines so the lines do not obfuscate the PDP
 	if (plot_pdp){
-		#compute them!
-		#friedman_pdp = apply(apdps, 2, mean) # pdp = average over the columns
 	    friedman_pdp = amdp_obj$pdp
 		
 		#calculate the line thickness based on how many lines there are
@@ -229,53 +221,6 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	
 	if (rug){
 		rug(amdp_obj$xj)	
-	}
-	
-	if (centered){
-		evt = setGraphicsEventHandlers(prompt = NULL,
-				onMouseDown = function(buttons, x, y){
-					#otherwise, get a point from the user					
-					x = locator(n = 1)$x				
-					
-					#make sure the user didn't click outside the bounds of xj
-					if (x > max(amdp_obj$xj)){
-						x = max(amdp_obj$xj)
-					} else if (x < min(amdp_obj$xj)){
-						x = min(amdp_obj$xj)
-					}			
-					
-					if (x_quantile){
-						x = x * (max(amdp_obj$xj) - min(amdp_obj$xj)) + min(amdp_obj$xj)
-					}
-					
-					pctile = sum(x > amdp_obj$xj) / length(amdp_obj$xj)
-					#make sure it's not outside the range of [0, 1]
-					pctile = min(0.999, max(0, pctile))
-				
-					
-					cat("x", x, "pctile", pctile)
-					plot(amdp_obj, 
-						plot_margin = plot_margin, 
-						frac_to_plot = frac_to_plot, 
-						plot_orig_pts_preds = plot_orig_pts_preds, 
-						pts_preds_size = pts_preds_size,
-						colorvec = colorvec,
-						color_by = color_by, 
-						x_quantile = x_quantile, 
-						plot_pdp = plot_pdp, 
-						plot_new_data = plot_new_data, 
-						centered = TRUE, 
-						rug = rug, 
-						prop_range_y = prop_range_y, 
-						centered_percentile = sum(x > amdp_obj$xj) / length(amdp_obj$xj), 
-						...)
-				}, 
-				onMouseMove = NULL,
-				onMouseUp = NULL, 
-				onKeybd = NULL,
-				consolePrompt = NULL)
-		
-		getGraphicsEvent()
 	}	
 		
 	if (is.null(legend_text)){
