@@ -6,3 +6,4 @@
   clustering expects an amdp object but it wouldn't be hard. 
 - plot.damdp needs to be checked with all it's arguments turned on and off...
 - MAN files bitches.
+- it should be OPTIONAL to pass y since it's only used for the plot anyway.
