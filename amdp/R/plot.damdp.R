@@ -196,17 +196,6 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		points(grid, apdps[i, ], col = colorvec[i], type = "l")
 	}
 
-	#if plot_dpdp is true, plot actual dpdp (in the sense of Friedman '01)
-	if (plot_dpdp){
-		friedman_dpdp = damdp_obj$dpdp
-		
-		#calculate the line thickness based on how many lines there are
-		num_lines = length(plot_points_indices)
-		#every 100 lines we get 0.5 more highlight up to 8
-		points(grid, friedman_dpdp, col = "yellow", type = "l", lwd = min(5.5 + (num_lines / 100) * 0.75, 8)) 
-		points(grid, friedman_dpdp, col = "BLACK", type = "l", lwd = 4)
-	}
-
 	if (plot_orig_pts_deriv){ #indicate the fitted values associated with observed xj values
 		deriv_actual = damdp_obj$actual_deriv[plot_points_indices]
 				
@@ -218,8 +207,20 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		points(xj, deriv_actual, col = "black", pch = 16, cex = pts_preds_size)
 		points(xj, deriv_actual, col = colorvec, pch = 16)
 	}
+
+
+	#if plot_dpdp is true, plot actual dpdp (in the sense of Friedman '01)
+	if (plot_dpdp){
+		friedman_dpdp = damdp_obj$dpdp
+		
+		#calculate the line thickness based on how many lines there are
+		num_lines = length(plot_points_indices)
+		#every 100 lines we get 0.5 more highlight up to 8
+		points(grid, friedman_dpdp, col = "yellow", type = "l", lwd = min(5.5 + (num_lines / 100) * 0.75, 8)) 
+		points(grid, friedman_dpdp, col = "BLACK", type = "l", lwd = 4)
+	}
 	
-	if (rug){
+	if (x_quantile==FALSE && rug){
 		rug(damdp_obj$xj)	
 	}
 
