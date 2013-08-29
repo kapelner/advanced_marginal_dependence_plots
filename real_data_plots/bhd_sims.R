@@ -57,7 +57,14 @@ par(mfrow = c(1, 3))
 j = "age"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, x_quantile = FALSE, color_by = "nox", plot_pdp = T)
 plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox_indic")
 cluster.amdp(amdb_bart_objs[[j]], nClusters = 2, prop_range_y = TRUE, centered = TRUE, plot_legend = TRUE)
+
+#hack a new thing up
+amdb_bart_objs[[j]]$Xamdp$I_nox = ifelse(X$nox > .538, 1, 0)
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
+
+
 
 j = "rm"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, color_by = "lstat", plot_pdp = T)
