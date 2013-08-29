@@ -65,7 +65,7 @@ amdp = function(object, X, y,
 		X = X[seq(1, N, by = nskip), ]
 		xj = X[, predictor]
 		grid_pts = sort(xj)
-	} else{ 
+	} else { 
 
 	  #2: indices specified:
 	  if (!missing(indices_to_build)){
@@ -133,7 +133,7 @@ amdp = function(object, X, y,
 	#Compute actual pdp. Note that this is averaged over the observations
 	#we sample, so this might be different from the 'true' pdp if frac_to_build < 0.
 	xvec_temp = X[ ,predictor]  #actual setting of this column after ordering.
-	for (t in 1 : length(grid_pts) ){
+	for (t in 1 : length(grid_pts)){
 		X[, predictor] = grid_pts[t]
 		if (use_generic){
 			apdps[, t] = predict(object, X, ...)
@@ -188,8 +188,7 @@ amdp = function(object, X, y,
 	pdp = apply(apdps, 2, mean) # pdp = average over the columns
 
 	amdp_obj = list(apdps = apdps, gridpts = grid_pts, predictor = predictor, xj = xj, actual_prediction = actual_predictions, 
-			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp=X,
-			pdp = pdp)
+			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp = X, pdp = pdp) 
 	class(amdp_obj) = "amdp"
 	
 	if (plot){	#if the user wants to use a default plotting, they can get the plot in one line

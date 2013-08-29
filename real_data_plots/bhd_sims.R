@@ -40,7 +40,7 @@ bart_machine = build_bart_machine(X, y)
 #create amdp's for all features in the boston housing data
 amdb_bart_objs = list()
 for (j in colnames(X)){
-	amdb_bart_objs[[j]] = amdp(bart_machine, X, y, j)
+	amdb_bart_objs[[j]] = amdp(bart_machine, X, y, j, frac_to_build = 0.2)
 }
 save(amdb_bart_objs, file = "amdb_bart_objs.RData")
 
@@ -55,9 +55,9 @@ for (j in colnames(X)){
 
 par(mfrow = c(1, 3))
 j = "age"
-plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, x_quantile = FALSE, color_by = "nox", plot_pdp = T)
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox_indic")
+plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, x_quantile = FALSE, color_by = "nox", plot_pdp = TRUE)
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, x_quantile = TRUE, plot_orig_pts_preds = FALSE, color_by = "nox", plot_pdp = TRUE)
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox_indic")
 cluster.amdp(amdb_bart_objs[[j]], nClusters = 2, prop_range_y = TRUE, centered = TRUE, plot_legend = TRUE)
 
 #hack a new thing up

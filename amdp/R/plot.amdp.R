@@ -1,6 +1,6 @@
 plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, pts_preds_size = 1.5,
 					colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = TRUE, plot_new_data = FALSE, 
-					centered = FALSE, rug = TRUE, prop_range_y = FALSE, centered_percentile = 0.01, ...){
+					centered = FALSE, rug = TRUE, prop_range_y = TRUE, centered_percentile = 0.01, ...){
 	
 	DEFAULT_COLORVEC = c("green", "red", "blue", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
 
@@ -192,17 +192,6 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 		points(grid, apdps[i, ], col = colorvec[i], type = "l")
 	}
 
-	#if plot_pdp is true, plot actual pdp (in the sense of Friedman '01)
-	#Ensure this is done after the lines so the lines do not obfuscate the PDP
-	if (plot_pdp){
-	    friedman_pdp = amdp_obj$pdp
-		
-		#calculate the line thickness based on how many lines there are
-		num_lines = length(plot_points_indices)
-		points(grid, friedman_pdp, col = "yellow", type = "l", lwd = min(5.5 + (num_lines / 100) * 0.75, 8)) #every 100 lines we get 0.5 more highlight up to 8
-		points(grid, friedman_pdp, col = "BLACK", type = "l", lwd = 4)
-	}
-
 	if (plot_orig_pts_preds){ #indicate the fitted values associated with observed xj values
 		yhat_actual = amdp_obj$actual_prediction[plot_points_indices]
 		if (centered){
@@ -222,6 +211,19 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	if (rug){
 		rug(amdp_obj$xj)	
 	}	
+	
+	#if plot_pdp is true, plot actual pdp (in the sense of Friedman '01)
+	#Ensure this is done after all other plotting so nothing obfuscates the PDP
+	if (plot_pdp){
+		if (centered){
+			pdp = amdp_obj$pdp - amdp_obj$pdp[1]
+		}		
+
+		#calculate the line thickness based on how many lines there are
+		num_lines = length(plot_points_indices)
+		points(grid, pdp, col = "yellow", type = "l", lwd = min(5.5 + (num_lines / 100) * 0.75, 8)) #every 100 lines we get 0.5 more highlight up to 8
+		points(grid, pdp, col = "BLACK", type = "l", lwd = 4)
+	}
 		
 	if (is.null(legend_text)){
 		invisible(list(plot_points_indices = plot_points_indices, legend_text = legend_text))
