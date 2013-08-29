@@ -2,7 +2,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 					colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = TRUE, plot_new_data = FALSE, 
 					centered = FALSE, rug = TRUE, prop_range_y = FALSE, centered_percentile = 0.01, ...){
 	
-	DEFAULT_COLORVEC = c("forestgreen", "darkred", "brown", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
+	DEFAULT_COLORVEC = c("green", "red", "blue", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
 
 	#list of passed arguments, including the ...
 #	arg_list = as.list(match.call(expand.dots = TRUE))
@@ -99,10 +99,6 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 				rgbs[i] = rgb(alpha_blend_colors[i, 1], alpha_blend_colors[i, 2], alpha_blend_colors[i, 3], alpha_blend_colors[i, 4])
 			}
 			
-#			plot(1:200,1:200, type = "n")
-#			for (i in 1 : N){
-#				abline(a = i, b = 0, col = rgbs[i])
-#			}
 			colorvec = rgbs[sort(x_color_by, index.return = T)$ix]
 		}
 	}
@@ -139,6 +135,10 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	}
 	if (x_quantile){
 		xlab = paste("quantile(", xlab, ")", sep = "")
+		arg_list = modifyList(arg_list, list(xlab = xlab))
+	}
+	if (!missing(color_by)){
+		xlab = paste(xlab, "colored by", color_by)
 		arg_list = modifyList(arg_list, list(xlab = xlab))
 	}
 	
