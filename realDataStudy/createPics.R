@@ -2,8 +2,8 @@ library(amdp)
 library(randomForest)
 library(gbm)
 library(nnet) #figure out how to use this thing...
-#library(caret)
-
+library(caret)
+library(RTextTools)
 
 ####
 full_dnames <- c("abalone", "ankara", "baseballsalary", "compactiv", "cpu", "ozone", "pole", "triazine", "wine_red", "wine_white")
@@ -11,6 +11,7 @@ full_dnames <- c("abalone", "ankara", "baseballsalary", "compactiv", "cpu", "ozo
 dnames = "wine_white"
 dataset_dir = "/home/alex/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
 studyDir = "/home/alex/workspace/advanced_marginal_dependence_plots/realDataStudy"
+#dataset_dir = "C:/Users/jbleich/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
 
 dataset = list() 
 for(name in dnames){
@@ -22,6 +23,7 @@ getFormula <- function(dframe){
 	formula(ff)
 }
 
+#dataset = dataset[[1]]
 
 #called for its side-effects
 datasetPics = function(dataset,picturedir){
@@ -39,9 +41,10 @@ datasetPics = function(dataset,picturedir){
 	rf_mod  = randomForest(form, data = dataset)
 	gbm_mod  = gbm(form, data= dataset, n.tree = 500, interaction.depth = 3, shrinkage = 0.1, cv.folds = 5, verbose=FALSE)
 	ntree = gbm.perf(gbm_mod, method = "cv", plot.it=FALSE)
-	#nnet_mod = train(x=X,y=y,method="nnet",preProcess=c("center","scale"),tuneLength=4,trace=FALSE,
-	
-	pad_study = list()
+	  
+  X_std = scale(x = X, center = T, scale = T)  
+  nnet_mod = nnet(x = X_std, y = as.matrix(y), size = ncol(X), maxit = 1000, decay = 5e-4, linout = ifelse(is.factor(y), F, T))
+  pad_study = list()
 
 	#list for each "technology"
 	pad_study[["rf"]] = list()
@@ -65,11 +68,19 @@ datasetPics = function(dataset,picturedir){
 		for(this_mod in mod_names){
 			print(this_mod)
 			#hope on this_mod = create amdp	
-			if(this_mod != "gbm"){
+			if(this_mod == "rf"){
 					pad_study[[this_mod]][[amdp_name]] = amdp(pad_study[[this_mod]]$mod, X=X, predictor=pred_name, y=y)
-			}else{
+			}else if(this_mod == "gbm"){
 					pad_study[[this_mod]][[amdp_name]] = amdp(gbm_mod, X=X, predictor=pred_name, 
 						predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, y=y)
+          else{
+            pad_study[[this_mod]][[amdp_name]] = amdp(nnet_mod, X=X, predictor=pred_name, 
+              predictfcn = function(object, newdata){
+                preprop_obj = preProcess(X)
+                newdata_std = predict(preprop_obj, newdata)
+                predict(object, newdata_std)
+                }, y=y)      
+          }
 			}
 			
 			#2nd round = create damdp
