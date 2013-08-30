@@ -215,6 +215,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	#if plot_pdp is true, plot actual pdp (in the sense of Friedman '01)
 	#Ensure this is done after all other plotting so nothing obfuscates the PDP
 	if (plot_pdp){
+		pdp = amdp_obj$pdp
 		if (centered){
 			pdp = amdp_obj$pdp - amdp_obj$pdp[1]
 		}		
