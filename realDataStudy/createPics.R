@@ -42,9 +42,11 @@ datasetPics = function(dataset,picturedir){
 	gbm_mod  = gbm(form, data= dataset, n.tree = 500, interaction.depth = 3, shrinkage = 0.1, cv.folds = 5, verbose=FALSE)
 	ntree = gbm.perf(gbm_mod, method = "cv", plot.it=FALSE)
 	  
-  X_std = scale(x = X, center = T, scale = T)  
-  nnet_mod = nnet(x = X_std, y = as.matrix(y), size = ncol(X), maxit = 1000, decay = 5e-4, linout = ifelse(is.factor(y), F, T))
-  pad_study = list()
+    X_std = scale(x = X, center = T, scale = T)
+	X_center = attributes(X_std)$`scaled:center`  
+	X_scale = attributes(X_std)$`scaled:scale`  
+  	nnet_mod = nnet(x = X_std, y = as.matrix(y), size = ncol(X), maxit = 500, decay = 5e-4, linout = ifelse(is.factor(y), F, T))
+  	pad_study = list()
 
 	#list for each "technology"
 	pad_study[["rf"]] = list()
@@ -57,7 +59,7 @@ datasetPics = function(dataset,picturedir){
 	#save down the models
 	pad_study[["rf"]]$mod = rf_mod
 	pad_study[["gbm"]]$mod = gbm_mod;  pad_study[["gbm"]]$mod_parms = ntree	
-	#pad_study[["nnet"]]$mod = nnet_mod
+	pad_study[["nnet"]]$mod = nnet_mod
 
 
 	for(pred_name in predictors){
@@ -76,12 +78,11 @@ datasetPics = function(dataset,picturedir){
           else{
             pad_study[[this_mod]][[amdp_name]] = amdp(nnet_mod, X=X, predictor=pred_name, 
               predictfcn = function(object, newdata){
-                preprop_obj = preProcess(X)
-                newdata_std = predict(preprop_obj, newdata)
+                newdata_std = scale(newdata, center = X_center, scale = X_scale)
                 predict(object, newdata_std)
                 }, y=y)      
           }
-			}
+		}
 			
 			#2nd round = create damdp
 			pad_study[[this_mod]][[damdp_name]] = damdp(pad_study[[this_mod]][[amdp_name]])			
