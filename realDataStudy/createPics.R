@@ -2,12 +2,13 @@ library(amdp)
 library(randomForest)
 library(gbm)
 library(nnet) #figure out how to use this thing...
-library(caret)
+#library(caret)
 
 
 ####
 full_dnames <- c("abalone", "ankara", "baseballsalary", "compactiv", "cpu", "ozone", "pole", "triazine", "wine_red", "wine_white")
-dnames = c("abalone", "ankara", "baseballsalary", "compactiv", "ozone", "triazine", "wine_red", "wine_white")
+#dnames = c("baseballsalary","wine_red", "cpu", "ozone","ankara")
+dnames = "wine_white"
 dataset_dir = "/home/alex/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
 studyDir = "/home/alex/workspace/advanced_marginal_dependence_plots/realDataStudy"
 
@@ -26,6 +27,9 @@ getFormula <- function(dframe){
 datasetPics = function(dataset,picturedir){
 	
 	X = dataset[,-1]; 
+	for(i in 1:ncol(X)){
+		X[,i] = as.numeric(X[,i])
+	}
 	y = dataset[,1]
 	predictors = names(X)
 	N = nrow(X)
