@@ -51,8 +51,7 @@ datasetPics = function(dataset,picturedir){
 	pad_study[["gbm"]] = list()
 	pad_study[["nnet"]] = list()
 
-	#mod_names = c("rf","gbm","nnet")
-	mod_names = c("rf","gbm")
+	mod_names = c("rf","gbm","nnet")
 
 	#save down the models
 	pad_study[["rf"]]$mod = rf_mod
@@ -99,7 +98,7 @@ datasetPics = function(dataset,picturedir){
 			#with quantiles now
 			par(mfrow=c(1,3))
 			plot(pad_study[[this_mod]][[amdp_name]], frac_to_plot=frac_to_plot, plot_pdp=TRUE, x_quantile=TRUE,
-						main=paste("q_pred_name",":",this_mod,sep=" "))
+						main=paste("q","pred_name",":",this_mod,sep=" "))
 			plot(pad_study[[this_mod]][[amdp_name]],centered=TRUE,centered_percentile=0.01,frac_to_plot=frac_to_plot, x_quantile=TRUE)
 			plot(pad_study[[this_mod]][[damdp_name]],frac_to_plot=frac_to_plot,plot_sd=TRUE,plot_dpdp=TRUE, x_quantile=TRUE)
 
