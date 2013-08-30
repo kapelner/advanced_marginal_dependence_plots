@@ -2,13 +2,11 @@ library(amdp)
 library(randomForest)
 library(gbm)
 library(nnet) #figure out how to use this thing...
-library(caret)
-library(RTextTools)
 
 ####
 full_dnames <- c("abalone", "ankara", "baseballsalary", "compactiv", "cpu", "ozone", "pole", "triazine", "wine_red", "wine_white")
-#dnames = c("baseballsalary","wine_red", "cpu", "ozone","ankara")
-dnames = "wine_white"
+dnames = c("baseballsalary","wine_red", "cpu", "ozone","ankara","wine_white")
+#dnames = "wine_white"
 dataset_dir = "/home/alex/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
 studyDir = "/home/alex/workspace/advanced_marginal_dependence_plots/realDataStudy"
 #dataset_dir = "C:/Users/jbleich/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
@@ -61,7 +59,6 @@ datasetPics = function(dataset,picturedir){
 	pad_study[["gbm"]]$mod = gbm_mod;  pad_study[["gbm"]]$mod_parms = ntree	
 	pad_study[["nnet"]]$mod = nnet_mod
 
-
 	for(pred_name in predictors){
 		print(pred_name)
 		amdp_name = paste(pred_name,"amdp",sep="_")
@@ -69,24 +66,24 @@ datasetPics = function(dataset,picturedir){
 
 		for(this_mod in mod_names){
 			print(this_mod)
-			#hope on this_mod = create amdp	
+
 			if(this_mod == "rf"){
 					pad_study[[this_mod]][[amdp_name]] = amdp(pad_study[[this_mod]]$mod, X=X, predictor=pred_name, y=y)
-			}else if(this_mod == "gbm"){
+			}
+			if(this_mod == "gbm"){
 					pad_study[[this_mod]][[amdp_name]] = amdp(gbm_mod, X=X, predictor=pred_name, 
 						predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, y=y)
-          else{
-            pad_study[[this_mod]][[amdp_name]] = amdp(nnet_mod, X=X, predictor=pred_name, 
-              predictfcn = function(object, newdata){
-                newdata_std = scale(newdata, center = X_center, scale = X_scale)
-                predict(object, newdata_std)
-                }, y=y)      
-          }
-		}
+          	}
+			if(this_mod == "nnet"){
+		        pad_study[[this_mod]][[amdp_name]] = amdp(nnet_mod, X=X, predictor=pred_name, 
+		          predictfcn = function(object, newdata){
+		            newdata_std = scale(newdata, center = X_center, scale = X_scale)
+		            predict(object, newdata_std)
+		            }, y=y)      
+            }
 			
 			#2nd round = create damdp
 			pad_study[[this_mod]][[damdp_name]] = damdp(pad_study[[this_mod]][[amdp_name]])			
-
 			
 			#create plots of amdp, c-amdp, d-amdp
 			par(mfrow=c(1,3))
