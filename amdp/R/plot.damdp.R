@@ -1,8 +1,8 @@
 plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = FALSE, plot_orig_pts_deriv = TRUE,
- 						pts_preds_size = 1,colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = FALSE, plot_new_data = FALSE, 
+ 						pts_preds_size = 1.5,colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = TRUE, plot_new_data = FALSE, 
 					rug = TRUE, prop_range_y = FALSE, ...){
 	
-	DEFAULT_COLORVEC = c("forestgreen", "darkred", "brown", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
+	DEFAULT_COLORVEC = c("green", "red", "blue", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
 	arg_list = list(...)
 
 	#list of passed arguments, including the ...
@@ -140,6 +140,10 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		xlab = paste("quantile(", xlab, ")", sep = "")
 		arg_list = modifyList(arg_list, list(xlab = xlab))
 	}
+	if (!missing(color_by)){
+		xlab = paste(xlab, "colored by", color_by)
+		arg_list = modifyList(arg_list, list(xlab = xlab))
+	}
 	
 	#same for y label
 	if( is.null(arg_list$ylab)){	
@@ -204,8 +208,10 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		} else {
 			xj = damdp_obj$xj[plot_points_indices]
 		}
-		points(xj, deriv_actual, col = "black", pch = 16, cex = pts_preds_size)
-		points(xj, deriv_actual, col = colorvec, pch = 16)
+		for (i in 1 : length(xj)){
+			points(xj[i], deriv_actual[i], col = "black", pch = 16, cex = pts_preds_size)
+			points(xj[i], deriv_actual[i], col = colorvec[i], pch = 16)
+		}
 	}
 
 
@@ -225,7 +231,7 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 	}
 
 	#do the sd plot if required.
-	if(plot_sd){
+	if (plot_sd){
 		abline(h = ylim[1] + offset, col = rgb(0.8,0.8,0.8))
 		at = seq(ylim[1], ylim[1] + max(damdp_obj$sd_deriv), length.out = 2)	
 		#labels = round(at / amdp_obj$range_y, 2)

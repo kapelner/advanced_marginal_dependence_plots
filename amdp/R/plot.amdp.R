@@ -203,9 +203,10 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 		} else {
 			xj = amdp_obj$xj[plot_points_indices]
 		}
-		points(xj, yhat_actual, col = "black", pch = 16, cex = pts_preds_size)
-		points(xj, yhat_actual, col = colorvec, pch = 16)
-
+		for (i in 1 : length(xj)){
+			points(xj[i], yhat_actual[i], col = "black", pch = 16, cex = pts_preds_size)
+			points(xj[i], yhat_actual[i], col = colorvec[i], pch = 16)
+		}
 	}
 	
 	if (rug){

@@ -7,11 +7,11 @@ damdp = function(amdp_obj, DerivEstimator, plot = FALSE){
 
 	gridpts = amdp_obj$gridpts
 
-	if(missing(DerivEstimator)){
+	if (missing(DerivEstimator)){
 		EstimatorWrapper = function(y){
 			D1tr( x = gridpts, y = supsmu(x=gridpts,y=y)$y)
 		}
-	}else{
+	} else{
 		#argument checking???
 		EstimatorWrapper = function(y){
 			DerivEstimator(y=y,x=gridpts)		
