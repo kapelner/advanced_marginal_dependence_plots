@@ -2,6 +2,7 @@ library(amdp)
 library(nnet)
 
 
+
 dataset_dir = "C:/Users/jbleich/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
 setwd(dataset_dir)
 dataset = read.csv("wine_white.csv")
@@ -18,15 +19,15 @@ frac_to_plot = 300/N; frac_to_plot = min(frac_to_plot, 1)   #suitable frac_to_pl
 X_std = scale(x = X, center = T, scale = T)
 X_center = attributes(X_std)$`scaled:center`  
 X_scale = attributes(X_std)$`scaled:scale`  
-nnet_mod = nnet(x = X_std, y = as.matrix(y), size = 3, maxit = 500, decay = 5^-4, linout = ifelse(is.factor(y), F, T))
+nnet_mod = nnet(x = X_std, y = as.matrix(y), size = 3, maxit = 500, decay = 5e-4, linout = ifelse(is.factor(y), F, T))
 
+pred_name = "pH"
 
 nn_wine_amdp = amdp(nnet_mod, X=X, predictor = pred_name, 
                                           predictfcn = function(object, newdata){
                                             newdata_std = scale(newdata, center = X_center, scale = X_scale)
                                             predict(object, newdata_std)
                                           }, y=y)
-
 
 
 nn_wine_amdp$Xamdp$al_ind = ifelse(nn_wine_amdp$Xamdp$alcohol > 10, 1, 0)
