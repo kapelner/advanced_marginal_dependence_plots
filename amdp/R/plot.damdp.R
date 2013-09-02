@@ -1,4 +1,4 @@
-plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = FALSE, plot_orig_pts_deriv = TRUE,
+plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = TRUE, plot_orig_pts_deriv = TRUE,
  						pts_preds_size = 1.5, colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = TRUE, plot_new_data = FALSE, 
 						rug = TRUE, prop_range_y = FALSE, ...){
 	
@@ -82,26 +82,16 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 				warning("color_by is a factor with greater than 10 levels: coercing to numeric.")
 				x_color_by = as.numeric(x_color_by)
 			}			
-			#easy, just smallest to largest with ties broken randomly.
-		
-#			alpha_blend_colors = matrix(0.5, nrow = N, ncol = 4)
-#			alpha_blend_colors[, 3] = 1
-#			alpha_blend_colors[, 4] = c(seq(from = 0.2, to = 1, length.out = ceiling(N / 2)), rep(1, N - ceiling(N / 2)))
-#			other_color_seq = seq(from = 1, to = 0, length.out = N - ceiling(N / 2))
-#			alpha_blend_colors[(ceiling(N / 2) + 1) : N, 3] = seq(from = 1, to = 0, length.out = N - ceiling(N / 2))
-#			alpha_blend_colors[(ceiling(N / 2) + 1) : N, 2] = seq(from = 0.5, to = 0, length.out = N - ceiling(N / 2))
-#			alpha_blend_colors[(ceiling(N / 2) + 1) : N, 1] = seq(from = 0.5, to = 0, length.out = N - ceiling(N / 2))
-	
-			alpha_blend_colors = matrix(0, nrow = N, ncol = 4)
-			alpha_blend_colors[, 3] = 1
-			alpha_blend_colors[, 4] = c(seq(from = 0.2, to = 1, length.out = ceiling(N / 2)), rep(1, N - ceiling(N / 2)))
-			alpha_blend_colors[(ceiling(N / 2) + 1) : N, 3] = seq(from = 1, to = 0, length.out = N - ceiling(N / 2))
-			alpha_blend_colors[, 2] = seq(from = 0.6, to = 0, length.out = N)
-			alpha_blend_colors[, 1] = seq(from = 0.6, to = 0, length.out = N)
+
+			alpha_blend_colors = matrix(0, nrow = N, ncol = 3)
+			
+			alpha_blend_colors[, 1] = seq(from = 1, to = 0, length.out = N)
+			alpha_blend_colors[, 2] = seq(from = 0, to = 1, length.out = N)
+			alpha_blend_colors[, 3] = 0			
 			
 			rgbs = array(NA, N)
 			for (i in 1 : N){
-				rgbs[i] = rgb(alpha_blend_colors[i, 1], alpha_blend_colors[i, 2], alpha_blend_colors[i, 3], alpha_blend_colors[i, 4])
+				rgbs[i] = rgb(alpha_blend_colors[i, 1], alpha_blend_colors[i, 2], alpha_blend_colors[i, 3])
 			}
 			
 #			plot(1:200,1:200, type = "n")
@@ -226,7 +216,7 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		points(grid, friedman_dpdp, col = "BLACK", type = "l", lwd = 4)
 	}
 	
-	if (x_quantile==FALSE && rug){
+	if (rug && !x_quantile){
 		rug(damdp_obj$xj)	
 	}
 
