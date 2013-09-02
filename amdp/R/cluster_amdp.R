@@ -47,7 +47,8 @@ cluster.amdp = function(amdp_obj, nClusters, plot = TRUE, plot_margin = 0.05, co
 				ylab = paste("cluster yhat"), 
 				xlab = xlab, 
 				xaxt = ifelse(amdp_obj$nominal_axis, "n", "s"))
-		starting_y_val = rank(cl$centers[, 1]) #use original, non-centered object only
+
+		cluster_order = order(cl$centers[, 1]) #use original, non-centered object only
 		cluster_size = cl$size / sum(cl$size)
 		total_line_width = avg_lwd * nClusters
 		
@@ -55,7 +56,7 @@ cluster.amdp = function(amdp_obj, nClusters, plot = TRUE, plot_margin = 0.05, co
 		for(i in 1 : nrow(cluster_centers)){		
 			#we re-order it so that when the code is rerun, randomness in kmeans
 			#doesn't switch which cluster goes with which color.
-			center_to_plot = which(starting_y_val == i)	
+			center_to_plot = cluster_order[i]
 			centers_to_plot[i] = center_to_plot
 			points(grid, cluster_centers[center_to_plot, ], col = colorvec[i], type = "l", 
 					lwd = cluster_size[center_to_plot] * total_line_width)
@@ -76,7 +77,8 @@ cluster.amdp = function(amdp_obj, nClusters, plot = TRUE, plot_margin = 0.05, co
 		
 		#legend
 		if (plot_legend){
-			prop_data_in_clusters = round(cl$size / sum(cl$size), 2)
+			#fix ordering
+			prop_data_in_clusters = round(cl$size[cluster_order] / sum(cl$size), 2)
 			
 			legend("topleft", title = "Prop.", inset = 0.01, legend = as.character(prop_data_in_clusters), fill = colorvec, cex = 0.8)
 		}
