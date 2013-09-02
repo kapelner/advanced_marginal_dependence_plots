@@ -24,7 +24,7 @@ par(mfrow = c(2, 1))
 
 for (j in colnames(X)){
 	amdps[[j]] = amdp(pima_rf, X = X, predictor = j, logodds = T, 
-                    predictfcn = function(object, newdata){predict(object, newdata, type = "prob")[,1]})
+                    predictfcn = function(object, newdata){predict(object, newdata, type = "prob")[, 2]})
 	plot(amdps[[j]], frac_to_plot = 0.5, x_quantile = T, centered = T, prop_range_y = F)
 	dampds[[j]] = damdp(amdps[[j]])
 	plot(dampds[[j]], frac_to_plot = 0.5, plot_sd = T, x_quantile = T, rug = F, prop_range_y = F)
