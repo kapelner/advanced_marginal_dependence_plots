@@ -35,9 +35,10 @@ nn_wine_amdp$Xamdp$al_ind = ifelse(nn_wine_amdp$Xamdp$alcohol > 10, 1, 0)
 plot(nn_wine_amdp, frac_to_plot=frac_to_plot, plot_pdp=TRUE, main=paste(pred_name,sep=" "), color_by = "al_ind")
 plot(nn_wine_amdp, centered=TRUE,centered_percentile=0.01,frac_to_plot=frac_to_plot, color_by = "al_ind")
 plot(nn_wine_amdp, centered=TRUE,centered_percentile=0.01,frac_to_plot=frac_to_plot, color_by = "al_ind", x_quantile = T)
+cluster.amdp(amdp_obj=nn_wine_amdp, nClusters=2,plot_legend=T)
 
 
-nn_wine_damp = damdp(nn_wine_amdp)
+.nn_wine_damp = damdp(nn_wine_amdp)
 
 plot(nn_wine_damp,frac_to_plot=frac_to_plot,plot_sd=TRUE, plot_dpdp=TRUE, color_by = "al_ind", x_quantile = T)
 
