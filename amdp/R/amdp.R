@@ -15,7 +15,7 @@ amdp = function(object, X, y,
 		stop("frac_to_build must be in (0, 1]")
 	}
   
-  if(!missing(y) & class(y) == "factor"){
+  if(!missing(y) && class(y) == "factor"){
     stop("Do not pass y when it is categorical variable.")
   }
 
