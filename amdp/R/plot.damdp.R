@@ -1,4 +1,4 @@
-plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = FALSE, plot_orig_pts_deriv = TRUE,
+plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = TRUE, plot_orig_pts_deriv = TRUE,
  						pts_preds_size = 1.5, colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = TRUE, plot_new_data = FALSE, 
 						rug = TRUE, prop_range_y = FALSE, ...){
 	
