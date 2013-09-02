@@ -40,3 +40,14 @@ plot(nn_wine_amdp, centered=TRUE,centered_percentile=0.01,frac_to_plot=frac_to_p
 nn_wine_damp = damdp(nn_wine_amdp)
 
 plot(nn_wine_damp,frac_to_plot=frac_to_plot,plot_sd=TRUE, plot_dpdp=TRUE, color_by = "al_ind", x_quantile = T)
+
+
+##
+predictfcn = function(object, newdata){
+  newdata_std = scale(newdata, center = X_center, scale = X_scale)
+  predict(object, newdata_std)
+  
+yhat = predictfcn(nnet_mod, X)
+  
+1 - sum((y-yhat)^2)/sum((y-mean(y))^2)  
+cor(y,yhat)^2
