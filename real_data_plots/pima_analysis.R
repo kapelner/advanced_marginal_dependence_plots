@@ -13,23 +13,14 @@ y = as.numeric(pima[,8]) - 1
 pima_rf = randomForest(x = X, y = y)
 
 
+amdps = list()
+dampds = list()
+par(mfrow = c(2, 1))
 
-for(name in names(X)){
-  
-  #Create amdp objects of form pima_amdp_obj_[predictor name]
-  assign(paste("pima_amdp_obj_",name, sep =""),  
-       amdp(pima_rf, X = X, predictor = name, y = y, logodds = T))
-  par(mfrow = c(1,2))
-  
-  #Plot centered amdp
-  plot(get(paste("pima_amdp_obj_",name, sep ="")), frac_to_plot = 0.1, x_quantile = T, centered = T)
-  
-  #Create corresponding damdp of form pima_damdp_obj_predictor name]
-  assign(paste("pima_damdp_obj_",name, sep =""), 
-         damdp(get(paste("pima_amdp_obj_",name, sep =""))))
-  
-  #plot it
-  plot(get(paste("pima_damdp_obj_",name, sep ="")), 
-       frac_to_plot = 0.1, plot_sd = T, x_quantile = T, rug = F)
+for (j in colnames(X)){
+  amdps[[j]] = amdp(pima_rf, X = X, predictor = j, y = y, logodds = T)
+  plot(amdps[[j]], frac_to_plot = 0.5, x_quantile = T, centered = T, prop_range_y = F)
+  dampds[[j]] = damdp(amdps[[j]])
+  plot(dampds[[j]], frac_to_plot = 0.5, plot_sd = T, x_quantile = T, rug = F, prop_range_y = F)
   readline("Click for next plot")
 }

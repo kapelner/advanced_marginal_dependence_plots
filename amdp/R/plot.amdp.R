@@ -208,7 +208,7 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 		}
 	}
 	
-	if (rug){
+	if (rug && !x_quantile){
 		rug(amdp_obj$xj)	
 	}	
 	
@@ -217,7 +217,8 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 	if (plot_pdp){
 		pdp = amdp_obj$pdp
 		if (centered){
-			pdp = amdp_obj$pdp - amdp_obj$pdp[1]
+#			apdps[, ceiling(ncol(apdps) * centered_percentile + 0.00001)]
+			pdp = pdp - pdp[ceiling(length(pdp) * centered_percentile + 0.00001)]
 		}		
 
 		#calculate the line thickness based on how many lines there are

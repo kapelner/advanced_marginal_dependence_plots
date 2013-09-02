@@ -226,7 +226,7 @@ plot.damdp = function(damdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd =
 		points(grid, friedman_dpdp, col = "BLACK", type = "l", lwd = 4)
 	}
 	
-	if (x_quantile==FALSE && rug){
+	if (rug && !x_quantile){
 		rug(damdp_obj$xj)	
 	}
 
