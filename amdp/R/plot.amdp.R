@@ -87,16 +87,15 @@ plot.amdp = function(amdp_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_p
 #			alpha_blend_colors[(ceiling(N / 2) + 1) : N, 2] = seq(from = 0.5, to = 0, length.out = N - ceiling(N / 2))
 #			alpha_blend_colors[(ceiling(N / 2) + 1) : N, 1] = seq(from = 0.5, to = 0, length.out = N - ceiling(N / 2))
 	
-			alpha_blend_colors = matrix(0, nrow = N, ncol = 4)
-			alpha_blend_colors[, 3] = 1
-			alpha_blend_colors[, 4] = c(seq(from = 0.2, to = 1, length.out = ceiling(N / 2)), rep(1, N - ceiling(N / 2)))
-			alpha_blend_colors[(ceiling(N / 2) + 1) : N, 3] = seq(from = 1, to = 0, length.out = N - ceiling(N / 2))
-			alpha_blend_colors[, 2] = seq(from = 0.6, to = 0, length.out = N)
-			alpha_blend_colors[, 1] = seq(from = 0.6, to = 0, length.out = N)
+			alpha_blend_colors = matrix(0, nrow = N, ncol = 3)
+			
+			alpha_blend_colors[, 1] = seq(from = 1, to = 0, length.out = N)
+			alpha_blend_colors[, 2] = 0
+			alpha_blend_colors[, 3] = seq(from = 0, to = 1, length.out = N)
 			
 			rgbs = array(NA, N)
 			for (i in 1 : N){
-				rgbs[i] = rgb(alpha_blend_colors[i, 1], alpha_blend_colors[i, 2], alpha_blend_colors[i, 3], alpha_blend_colors[i, 4])
+				rgbs[i] = rgb(alpha_blend_colors[i, 1], alpha_blend_colors[i, 2], alpha_blend_colors[i, 3])
 			}
 			
 			colorvec = rgbs[sort(x_color_by, index.return = T)$ix]

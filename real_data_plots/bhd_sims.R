@@ -57,14 +57,15 @@ par(mfrow = c(1, 3))
 j = "age"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, x_quantile = FALSE, color_by = "nox", plot_pdp = TRUE)
 plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, x_quantile = TRUE, plot_orig_pts_preds = FALSE, color_by = "nox", plot_pdp = TRUE)
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox_indic")
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
 cluster.amdp(amdb_bart_objs[[j]], nClusters = 2, prop_range_y = TRUE, centered = TRUE, plot_legend = TRUE)
 
 #hack a new thing up
-amdb_bart_objs[[j]]$Xamdp$I_nox = ifelse(X$nox > .538, 1, 0)
-plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
-
-
+par(mfrow = c(2, 1))
+amdb_bart_objs[[j]]$Xamdp$I_nox = ifelse(amdb_bart_objs[[j]]$Xamdp$nox > .538, 1, 0)
+plot(amdb_bart_objs[[j]], frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = F, plot_orig_pts_preds = FALSE, color_by = "I_nox")
+damdb_bart_objs = damdp(amdb_bart_objs[[j]])
+plot(damdb_bart_objs, x_quantile = F, color_by = "I_nox")
 
 j = "rm"
 plot(amdb_bart_objs[[j]], frac_to_plot = 0.1, color_by = "lstat", plot_pdp = T)
