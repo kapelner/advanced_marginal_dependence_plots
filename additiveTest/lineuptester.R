@@ -14,12 +14,12 @@ rfPred = function(object,newdata){
 }
 
 bartFit = function(X,y){
-  build_bart_machine(X=Xc, y=(y-g1_of_Xs), run_in_sample = FALSE, 
+  build_bart_machine(X=X, y=y, run_in_sample = FALSE, 
       use_missing_data = TRUE, use_missing_data_dummies_as_covars = FALSE)  
 }
 
-bartPred = function(object,newdata){
-  predict(object, newdata)
+bartPred = function(object, newdata){
+  predict(object, new_data = newdata)
 }
 
 ################################ EXAMPLES:

@@ -56,7 +56,7 @@ backfitter = function(X, y, predictor, fitMethod, predictfcn, eps = .01, iter.ma
 	OneStep = function(){
 		#do g2 first
 		new_g2_mod = fitMethod(X=Xc, y=(y-g1_of_Xs))
-		new_g2 = predictfcn(object=new_g2_mod) 
+		new_g2 = predictfcn(object=new_g2_mod, Xc) 
 		new_g1 = supsmu(x=Xs, y=(y-new_g2))$y
     new_g1 = rep(new_g1, times_to_repeat) #matches length of new_g2 now.
 		return(list(new_g1=new_g1,new_g2=new_g2,new_g2_mod=new_g2_mod))
