@@ -4,53 +4,52 @@ library(amdp)
 source("/home/alex/workspace/advanced_marginal_dependence_plots/additiveTest/backfitter.R")
 source("/home/alex/workspace/advanced_marginal_dependence_plots/additiveTest/additivityLineup.R")
 
+
+#### wrappers for bart and rf
+rfFit = function(X,y){
+  randomForest(x=X,y=y)
+}
+rfPred = function(object,newdata){
+  predict(object)
+}
+
+bartFit = function(X,y){
+  build_bart_machine(X=Xc, y=(y-g1_of_Xs), run_in_sample = FALSE, 
+      use_missing_data = TRUE, use_missing_data_dummies_as_covars = FALSE)  
+}
+
+bartPred = function(object,newdata){
+  predict(object, newdata)
+}
+
+################################ EXAMPLES:
+########### Boston housing, rm
 #get the data
 data(BostonHousing); X=BostonHousing[,-14]
 
 #build real rf
 rf_mod = randomForest(medv~.,BostonHousing)
 
-
-
-########### rm
 #real amdp
-rm = amdp(rf_mod, predictor="rm", X=X, frac_to_build=.2)
+rm = amdp(rf_mod, predictor="rm", X=X, frac_to_build=1)
 
 #additive backfitter model
-bf = backfitter(X=X,y=BostonHousing$medv, predictor=6, eps=.001, fitMethod=randomForest,iter.max=10)
+bf_rm = backfitter(X=X,y=BostonHousing$medv, predictor="rm", eps=.005, fitMethod=rfFit,
+                predictfcn = rfPred, iter.max=10)
 
 #lineup test
-realplot = additivityLineup(bf, fitMethod=randomForest, figs=12, realAmdp=rm, centered=TRUE)
+#frac_to_plot applies to realAmdp, which has 506 curves. bf_rm is built to 506 observations as well,
+# so the null pads are only built to .2*506 = 101 observations in bf_rm to save time. Then
+# the null pads are printed with frac_to_plot = 1 and the real one with frac_to_plot=.2
+alu_rm = additivityLineup(bf_rm, fitMethod=rfFit, figs=12, realAmdp=rm, centered=TRUE, frac_to_plot=.2)
 
-########### rm
-#real amdp
-age = amdp(rf_mod, predictor="age", X=X, frac_to_build=.1)
-
-#additive backfitter model
-bf_age = backfitter(X=X,y=BostonHousing$medv, predictor=7, eps=.001, g2Fit=randomForest,iter.max=10)
-
-#lineup test
-realplot = additivityLineup(bf_age, predictor=7, fitMethod=randomForest, figs=10, realAmdp=age, frac_to_build=.1,centered=T)
-
-
-
-########## crim 
-crim = amdp(rf_mod, predictor="crim", X=X, frac_to_build=1, y = BostonHousing$medv)
-
-#additive backfitter model
-bfcrim = backfitter(X=X,y=BostonHousing$medv, predictor= 1, eps=.01, g2Fit=randomForest)
-
-#lineup test
-realplot = additivityLineup(bfcrim, predictor=1, fitMethod=randomForest, figs=10, realAmdp=crim)
-
-
+#######################################################################################
 ####### Depression data (not submitted to git for privacy concerns)
 
 amdp.treatment = amdp(bart_machine, X, y, "treatment")
 
-amdp.backfitter = backfitter(X = X, y = y, predictor = 38, eps = .01, fitMethod = build_bart_machine)
+amdp.backfitter = backfitter(X = X, y = y, predictor="treatment", eps=.005, 
+                    fitMethod=bartFit, predictfcn = bartPred, iter.max = 10)
 
-realplot = additivityLineup(amdp.backfitter, fitMethod = build_bart_machine, figs = 12, realAmdp = amdp.treatment, centered = TRUE, color_by = "marstat")
-
-
-
+alu_trt = additivityLineup(bart_machine, fitMethod = bartFit, figs = 12, 
+                  realAmdp = amdp.treatment, centered = TRUE, color_by = "marstat")
