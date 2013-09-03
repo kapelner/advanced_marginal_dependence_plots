@@ -2,7 +2,7 @@
 # \hat{f}(x) = \hat{g}_{1}(x_S)+\hat{g}_{2}(x_C)
 
 
-backfitter = function(X, y, predictor, eps = .01, iter.max=10, g2Fit, verbose=TRUE,...){
+backfitter = function(X, y, predictor, fitMethod, eps = .01, iter.max=10, verbose=TRUE,...){
 
 	N = nrow(X)
 	X[, predictor] = X[, predictor]	+ runif(N)*sd(y)*.0001 #break ties.
@@ -23,7 +23,7 @@ backfitter = function(X, y, predictor, eps = .01, iter.max=10, g2Fit, verbose=TR
 	
 	OneStep = function(){
 		#do g2 first
-		new_g2_mod = g2Fit(x=Xc, y=(y-g1_of_Xs))
+		new_g2_mod = fitMethod(x=Xc, y=(y-g1_of_Xs))
 		new_g2 = predict(new_g2_mod) 
 		new_g1 = supsmu(x=Xs, y=(y-new_g2))$y
 		return(list(new_g1=new_g1,new_g2=new_g2,new_g2_mod=new_g2_mod))
@@ -36,7 +36,8 @@ backfitter = function(X, y, predictor, eps = .01, iter.max=10, g2Fit, verbose=TR
 		nextStep = OneStep()
 		
 		#compute delta
-		delta = sum((nextStep$new_g1 - g1_of_Xs)^2) + sum((nextStep$new_g2 - g2_of_Xc)^2) 
+		delta = sum((nextStep$new_g1 - g1_of_Xs)^2) / sum(g1_of_Xs^2)
+    delta = delta + sum((nextStep$new_g2 - g2_of_Xc)^2) / sum(g2_of_Xc^2)  
 
 		#update
 		current_g2 = nextStep$new_g2_mod
