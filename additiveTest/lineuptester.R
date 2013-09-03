@@ -44,3 +44,13 @@ bfcrim = backfitter(X=X,y=BostonHousing$medv, predictor= 1, eps=.01, g2Fit=rando
 realplot = additivityLineup(bfcrim, predictor=1, fitMethod=randomForest, figs=10, realAmdp=crim)
 
 
+####### Depression data (not submitted to git for privacy concerns)
+
+amdp.treatment = amdp(bart_machine, X, y, "treatment")
+
+amdp.backfitter = backfitter(X = X, y = y, predictor = 38, eps = .01, fitMethod = build_bart_machine)
+
+realplot = additivityLineup(amdp.backfitter, fitMethod = build_bart_machine, figs = 12, realAmdp = amdp.treatment, centered = TRUE, color_by = "marstat")
+
+
+
