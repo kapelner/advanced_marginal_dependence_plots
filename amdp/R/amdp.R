@@ -40,7 +40,7 @@ amdp = function(object, X, y,
 			i = i+1
 		}
 		if (found_predict == 0){
-			stop("No generic predict method found this object.")
+			stop("No generic predict method found for this object.")
 		} else {
 			use_generic = TRUE
 		}
@@ -188,10 +188,12 @@ amdp = function(object, X, y,
 
 	#compute friedman's pdp:
 	pdp = apply(apdps, 2, mean) # pdp = average over the columns
-
+  if(missing(predictfcn)){
+    predictfcn=NULL
+  }
 	amdp_obj = list(apdps = apdps, gridpts = grid_pts, predictor = predictor, xj = xj, actual_prediction = actual_predictions, 
 			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp = X, pdp = pdp,
-			indices_to_build = indices_to_build, frac_to_build = frac_to_build) 
+			indices_to_build = indices_to_build, frac_to_build = frac_to_build, predictfcn = predictfcn) 
 	class(amdp_obj) = "amdp"
 	
 	if (plot){	#if the user wants to use a default plotting, they can get the plot in one line
