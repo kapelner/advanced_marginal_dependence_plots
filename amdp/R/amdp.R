@@ -62,9 +62,11 @@ amdp = function(object, X, y,
 		order_xj = order(xj)
 		X = X[order_xj, ]  #ordered by column xj 	
 		nskip = round(1 / frac_to_build)
-		X = X[seq(1, N, by = nskip), ]
+		xj_sorted_indices_to_build = seq(1, N, by = nskip)
+		X = X[xj_sorted_indices_to_build, ]
 		xj = X[, predictor]
 		grid_pts = sort(xj)
+		indices_to_build = order_xj[xj_sorted_indices_to_build]
 	} else { 
 
 	  #2: indices specified:
@@ -188,7 +190,8 @@ amdp = function(object, X, y,
 	pdp = apply(apdps, 2, mean) # pdp = average over the columns
 
 	amdp_obj = list(apdps = apdps, gridpts = grid_pts, predictor = predictor, xj = xj, actual_prediction = actual_predictions, 
-			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp = X, pdp = pdp) 
+			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp = X, pdp = pdp,
+			indices_to_build = indices_to_build, frac_to_build = frac_to_build) 
 	class(amdp_obj) = "amdp"
 	
 	if (plot){	#if the user wants to use a default plotting, they can get the plot in one line
