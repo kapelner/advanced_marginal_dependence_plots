@@ -75,24 +75,26 @@ Other parameters to be passed.
 \examples{
 \dontrun{
 require(randomForest)
-require(mlbench)
+require(MASS)
 library(amdp)
-data(PimaIndiansDiabetes)
+data(Pima.te)
 
 #fit a random forest
-pima_rf = randomForest(diabetes~., PimaIndiansDiabetes)
+pima_rf = randomForest(type~., Pima.te)
 
-#define a predict function that returns Prob(diabetes=pos)
+#define a predict function that returns Prob(diabetes=Yes)
 pima_predict = function(object, newdata){
-	preds = predict(object, newdata, type="prob")
-	col_idx = which(colnames(preds)=="pos")
-	preds[,col_idx] 
+  preds = predict(object, newdata, type="prob")
+  col_idx = which(colnames(preds)=="Yes")
+  preds[,col_idx] 
 }
 
-#get amdp object for the 'glucose' predictor, but converted to logit.
-pima_amdp = amdp(pima_rf, X = PimaIndiansDiabetes[,1:8], predictor = "glucose", predictfcn = pima_predict, logodds = T)
+#get amdp object for the 'skin' predictor, but converted to logit.
+pima_amdp = amdp(pima_rf, X = Pima.te[,1:7], predictor = "skin", predictfcn = pima_predict, logodds = T)
 
 #plot only 10% of curves with quantiles, actual pdp, and original points. 
-plot(pima_amdp, x_quantile = T, plot_pdp = T, frac_to_plot = .1)
+
+plot(pima_amdp, x_quantile = T, plot_pdp = T, frac_to_plot = .1, centered=T)
+
 }
 }
