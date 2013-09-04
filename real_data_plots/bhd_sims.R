@@ -34,13 +34,15 @@ X$medv = NULL
 set_bart_machine_num_cores(4)
 bart_machine = build_bart_machine(X, y)
 
+
+
 #windows()
 #investigate_var_importance(bart_machine)
 
 #create amdp's for all features in the boston housing data
 amdb_bart_objs = list()
 for (j in colnames(X)){
-	amdb_bart_objs[[j]] = amdp(bart_machine, X, y, j, frac_to_build = 0.2)
+	amdb_bart_objs[[j]] = amdp(bart_machine, X, y, j, frac_to_build = 1)
 }
 save(amdb_bart_objs, file = "amdb_bart_objs.RData")
 
@@ -105,9 +107,38 @@ summary(lm_mod)
 
 
 
+rf_mod = randomForest(X, y)
+j = "age"
+rf.pad = amdp(rf_mod, X, y, j, frac_to_build = 1)
+
+
+#just PDP
+plot(rf.pad, x_quantile = TRUE, plot_pdp = TRUE, colorvec = rep("white", nrow(X)), plot_orig_pts_preds = FALSE)
+#first PAD
+plot(rf.pad, x_quantile = TRUE, plot_pdp = TRUE)
+#cPAD
+plot(rf.pad, x_quantile = TRUE, plot_pdp = TRUE, centered = TRUE)
+#dPAD
+rf.dpad = damdp(rf.pad)
+plot(rf.dpad, x_quantile = T)
+#cPAD by color
+rf.pad$Xamdp$I_nox = ifelse(rf.pad$Xamdp$nox > .538, 1, 0)
+rf.pad$Xamdp$I_crime = ifelse(rf.pad$Xamdp$crim > .256, 1, 0)
+rf.pad$Xamdp$I_rm = ifelse(rf.pad$Xamdp$rm > 6.2, 1, 0)
+plot(rf.pad, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = T, plot_orig_pts_preds = T, color_by = "I_rm")
 
 
 
+#plot(rf.pad, frac_to_plot = 1, x_quantile = TRUE, color_by = "nox", plot_pdp = TRUE)
+#plot(rf.pad, frac_to_plot = 1, centered = TRUE, x_quantile = TRUE, plot_orig_pts_preds = FALSE, color_by = "nox", plot_pdp = TRUE)
+#plot(rf.pad, frac_to_plot = 1, centered = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
+#
+##hack a new thing up
+##par(mfrow = c(2, 1))
+#rf.pad$Xamdp$I_nox = ifelse(rf.pad$Xamdp$nox > .538, 1, 0)
+#plot(rf.pad, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = T, plot_orig_pts_preds = T, color_by = "I_nox")
+#rf.dpad = damdp(rf.pad)
+#plot(rf.dpad, x_quantile = T, color_by = "I_nox")
 
 
 

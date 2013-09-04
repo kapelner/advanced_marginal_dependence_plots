@@ -51,5 +51,5 @@ amdp.treatment = amdp(bart_machine, X, y, "treatment")
 amdp.backfitter = backfitter(X = X, y = y, predictor="treatment", eps=.005, 
                     fitMethod=bartFit, predictfcn = bartPred, iter.max = 10)
 
-alu_trt = additivityLineup(bart_machine, fitMethod = bartFit, figs = 12, 
+alu_trt = additivityLineup(amdp.backfitter, fitMethod = bartFit, figs = 12, 
                   realAmdp = amdp.treatment, centered = TRUE, color_by = "marstat")
