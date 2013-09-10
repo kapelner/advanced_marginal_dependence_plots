@@ -1,7 +1,6 @@
 amdp = function(object, X, y,
 		predictor, predictfcn, newdata, 
-		verbose = TRUE, plot = FALSE, 
-		frac_to_build = 1, indices_to_build = NULL, 
+		verbose = TRUE, frac_to_build = 1, indices_to_build = NULL, 
 		num_grid_pts, logodds = F, ...){
 
 	MAX_NUM_UNIQUE_PTS_NOMINAL = 5
@@ -196,9 +195,6 @@ amdp = function(object, X, y,
 			indices_to_build = indices_to_build, frac_to_build = frac_to_build, predictfcn = predictfcn) 
 	class(amdp_obj) = "amdp"
 	
-	if (plot){	#if the user wants to use a default plotting, they can get the plot in one line
-		plot(amdp_obj)
-	}
 	
 	invisible(amdp_obj)
 }
