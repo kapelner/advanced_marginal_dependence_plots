@@ -2,7 +2,7 @@ library(randomForest)
 library(missForest)
 library(MASS)
 library(amdp)
-
+library(nnet)
 
 ###########GRID COMPUTING
 LAST_NAME = "kapelner"
@@ -106,8 +106,12 @@ summary(lm_mod)
 
 
 
-
+###RF model
 rf_mod = randomForest(X, y)
+#yhat = predict(rf_mod, X)
+#plot(y, yhat)
+
+
 j = "age"
 rf.pad = amdp(rf_mod, X, y, j, frac_to_build = 1)
 
@@ -129,6 +133,9 @@ plot(rf.pad, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile 
 
 
 
+
+
+
 #plot(rf.pad, frac_to_plot = 1, x_quantile = TRUE, color_by = "nox", plot_pdp = TRUE)
 #plot(rf.pad, frac_to_plot = 1, centered = TRUE, x_quantile = TRUE, plot_orig_pts_preds = FALSE, color_by = "nox", plot_pdp = TRUE)
 #plot(rf.pad, frac_to_plot = 1, centered = TRUE, x_quantile = FALSE, plot_orig_pts_preds = FALSE, color_by = "nox")
@@ -141,4 +148,36 @@ plot(rf.pad, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile 
 #plot(rf.dpad, x_quantile = T, color_by = "I_nox")
 
 
+
+###NN model
+
+X_std = scale(x = X, center = T, scale = T)
+X_center = attributes(X_std)$`scaled:center`  
+X_scale = attributes(X_std)$`scaled:scale` 
+nnet_mod = nnet(x = X_std, y = y, size = 5, maxit = 10000, decay = 0, linout = TRUE)
+
+#yhat = predict(nnet_mod, X_std, type = "raw")
+
+j = "age"
+
+nn.pad = amdp(nnet_mod, X, y, j, frac_to_build = 1, predictfcn = function(object, newdata){
+			predict(object, scale(newdata, center = X_center, scale = X_scale))
+		})
+
+
+
+#just PDP
+plot(nn.pad, x_quantile = TRUE, plot_pdp = TRUE, colorvec = rep("white", nrow(X)), plot_orig_pts_preds = FALSE)
+#first PAD
+plot(nn.pad, x_quantile = TRUE, plot_pdp = TRUE)
+#cPAD
+plot(nn.pad, x_quantile = TRUE, plot_pdp = TRUE, centered = TRUE)
+#dPAD
+nn.dpad = damdp(nn.pad)
+plot(nn.dpad, x_quantile = T)
+#cPAD by color
+nn.pad$Xamdp$I_nox = ifelse(nn.pad$Xamdp$nox > .538, 1, 0)
+nn.pad$Xamdp$I_crime = ifelse(nn.pad$Xamdp$crim > .256, 1, 0)
+nn.pad$Xamdp$I_rm = ifelse(nn.pad$Xamdp$rm > 6.2, 1, 0)
+plot(nn.pad, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE, x_quantile = T, plot_orig_pts_preds = T, color_by = "I_rm")
 
