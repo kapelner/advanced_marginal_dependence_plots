@@ -1,14 +1,14 @@
 \name{amdp}
 \alias{amdp}
 \title{
-Create amdps
+Create a pad object.
 }
 \description{
 Create amdps
 }
 \usage{
 amdp(object, X, y, predictor, predictfcn, newdata, verbose = TRUE, 
-		plot = FALSE, frac_to_build = 1, indices_to_build = NULL, num_grid_pts,
+		frac_to_build = 1, indices_to_build = NULL, num_grid_pts,
     logodds = F, ...)
 }
 %- maybe also 'usage' for other objects documented here.
@@ -29,12 +29,9 @@ Column number of \code{X} for which to calculate partial dependence.  Alternativ
 \item{predictfcn}{
 Optional prediction function to use with \code{object}. Must accept arguments \code{object} and \code{newdata}. The software does minimal further checking -- it is up to the user to ensure that \code{predictfcn(object = object, newdata = X)} is supported. If not passed, the function looks for the default \code{predict} function associated with \code{class(object)}.
 }
-\item{}
+\item{newdata}{Adam - explain what this does???}
 \item{verbose}{
   If \code{verbose} is \code{TRUE} we print updates.
-}
-\item{plot}{
-If \code{plot} is \code{TRUE} we make a plot using default plot settings at the end of the routine.
 }
 \item{frac_to_build}{
 Fraction of curves to build. If less than 1, the rows chosen correspond to equally distributed  quantiles of \code{predictor}.
