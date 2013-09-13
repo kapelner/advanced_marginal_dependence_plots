@@ -1,6 +1,10 @@
 #nonparametric parametric bootstrap.
 
-additivityLineup = function(backfit_obj, fitMethod, realAmdp, figs=10,...){
+additivityLineup = function(backfit_obj, fitMethod, realAmdp, figs=10, colorvecfcn, usecolorvecfcn_inreal=F,
+null_predictfcn,...){
+# colorvec fcn is there to allow you to color null plots by the levels of a variable without
+# introducing the indicator variable into the X matrix.  introducing it into the X matrix
+# will let the algos use the indicator as a predictor -- prob not the behavior we want.
   
   ######## check inputs
   # backfit_obj
@@ -18,10 +22,14 @@ additivityLineup = function(backfit_obj, fitMethod, realAmdp, figs=10,...){
     }
   }
   
-  # predictfcn is taken from realAmdp!
-  predictfcn = realAmdp$predictfcn  
-  if(is.null(predictfcn)){
-    use_generic = TRUE
+  # predictfcn for nulls:
+  if(missing(null_predictfcn)){
+	if(is.null(realAmdp$predictfcn)){
+		null_predictfcn = NULL
+	}
+	else{
+		null_predictfcn = realAmdp$predictfcn	
+	}
   }
   
   predictor = backfit_obj$predictor
@@ -43,6 +51,27 @@ additivityLineup = function(backfit_obj, fitMethod, realAmdp, figs=10,...){
   if(is.null(centered_percentile) && centered==TRUE){ 
     centered_percentile = .01  #default in plot.amdp
   }
+
+  
+  #and some more for frac_to_plot
+  frac_to_build_null = 1
+
+  if(!is.null(arg_list$frac_to_plot)){
+    warning_msg = paste("'frac_to_plot' only applies to plotting 'realAmdp'.",
+    "'frac_to_build' is set in null PADs to ensure the same number of curves are plotted for null and real plots.",sep="\n")  
+    warning(warning_msg)
+    frac_to_build_null = nrow(realAmdp$apdps)*arg_list$frac_to_plot / nrow(backfit_obj$X)
+
+	#fix indices to plot so that the ylim's can be constrained to only those
+    #curves actually plotted.
+    plot_points_indices = which(as.logical(rbinom(nrow(realAmdp$apdps), 1, frac_to_plot)))
+    realAmdp$apdps = realAmdp$apdps[plot_points_indices, ]
+	realAmdp$grid =  realAmdp$grid[plot_points_indices]
+	realAmdp$Xamdp =  realAmdp$Xamdp[plot_points_indices,]
+	realAmdp$xj =  realAmdp$xj[plot_points_indices]
+	frac_to_plot = 1
+  }
+
   #figure out min and max of real amdp object -- depends on centering  
   if(centered){
     centering_vector = realAmdp$apdps[, ceiling(ncol(realAmdp$apdps) * centered_percentile + 0.00001)]
@@ -52,15 +81,6 @@ additivityLineup = function(backfit_obj, fitMethod, realAmdp, figs=10,...){
   }
   apdp_min = rg[1]
   apdp_max = rg[2]
-  
-  #and some more for frac_to_plot
-  frac_to_build_null = 1
-  if(!is.null(arg_list$frac_to_plot)){
-    warning_msg = paste("'frac_to_plot' only applies to plotting 'realAmdp'.",
-    "'frac_to_build' is set in null PADs to ensure the same number of curves are plotted for null and real plots.",sep="\n")  
-    warning(warning_msg)
-    frac_to_build_null = nrow(realAmdp$apdps)*arg_list$frac_to_plot / nrow(backfit_obj$X)
-  }
   
 	additive_fit = backfit_obj$g1_of_Xs+backfit_obj$g2_of_Xc
 	additive_res = backfit_obj$y - additive_fit
@@ -74,12 +94,12 @@ additivityLineup = function(backfit_obj, fitMethod, realAmdp, figs=10,...){
 		response = additive_fit + sample(additive_res, size=length(additive_res), replace = F)
 		new_fit = fitMethod(X=backfit_obj$X, y=response)
 		null_additive_fits[[i]] = new_fit
-    if(use_generic){ #no predictfcn passed
-  		null_amdps[[i]] = amdp(new_fit, X=backfit_obj$X, predictor=predictor, y = backfit_obj$y, 
+    if(is.null(null_predictfcn)){ #no predictfcn found, use generic
+  		null_amdps[[i]] = amdp(new_fit, X=backfit_obj$X, predictor=predictor, y = backfit_obj$y,
 							frac_to_build=frac_to_build_null)
     }else{
       null_amdps[[i]] = amdp(new_fit, X=backfit_obj$X, predictor=predictor, y = backfit_obj$y, 
-                             frac_to_build=frac_to_build_null, predictfcn = realAmdp$predictfcn)
+                             frac_to_build=frac_to_build_null, predictfcn = null_predictfcn)
     }
     
     ### keep track of min and max. 
@@ -127,13 +147,21 @@ additivityLineup = function(backfit_obj, fitMethod, realAmdp, figs=10,...){
 		}
 
 		if((!plotted_truth) && (i==where_to_place)){
-			plot(realAmdp,ylim = ylim,...)
+			if(usecolorvecfcn_inreal){
+				colors = colorvecfcn(realAmdp)	
+				plot(realAmdp,ylim = ylim,colorvec=colors,...)
+			}else{
+				plot(realAmdp,ylim = ylim,...)
+			}
 			plotted_truth = TRUE
 		}
 		else{
-      null_arg_list$amdp_obj = null_amdps[[idx_to_plot]]
-			#plot(null_amdps[[idx_to_plot]], ylim = ylim)
-      do.call(plot.amdp, null_arg_list)
+      		null_arg_list$amdp_obj = null_amdps[[idx_to_plot]]
+			if(!missing(colorvecfcn)){
+				colors = colorvecfcn(null_amdps[[idx_to_plot]])
+				null_arg_list$colorvec = colors
+			}
+      		do.call(plot.amdp, null_arg_list)
 		}
 	}
   al_obj = list(location=where_to_place, null_additive_fits = null_additive_fits, 
