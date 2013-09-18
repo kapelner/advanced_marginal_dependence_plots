@@ -1,8 +1,2 @@
-- Fix the 'rug' which is all f**ed up and frequently says stuff like "some values will be clipped"
-   also it seems to be blatantly WRONG in some cases.  >> no RUG for quantile.
-- Add SDs in the partial plot, should they be binned?
-- Decide if we want to do clustering for the derivatives.  Currrently this isn't allowed because
-  clustering expects an amdp object but it wouldn't be hard. 
-- plot.damdp needs to be checked with all it's arguments turned on and off...
 - MAN files bitches.
-- it should be OPTIONAL to pass y since it's only used for the plot anyway.
+- change the function names, both internally and externally.
