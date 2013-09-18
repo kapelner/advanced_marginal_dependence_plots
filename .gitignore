@@ -5,3 +5,5 @@
 install_instructions.txt
 *.Rcheck
 bin/*
+real_data_plots/equity_factor_analysis.R
+lineup_rm.pdf
