@@ -71,7 +71,7 @@ plot(amdp_obj_gbm, plot_pdp = T, frac_to_plot = 0.01)
 cluster_amdp(amdp_obj_gbm, nClusters = 2)
 
 windows()
-plot.damdp(damdp_obj_gbm, plot_sd = T, frac_to_plot = 0.05, x_quantile=T, rug = F)
+plot(damdp_obj_gbm, plot_sd = T, frac_to_plot = 0.05, x_quantile=T, rug = F)
 
 
 #cluster_amdp(amdp_obj_gbm, nClusters = 2, colorvec = c(rgb(0.4, 0.4, 0.4), rgb(0.8, 0.8, 0.8)))

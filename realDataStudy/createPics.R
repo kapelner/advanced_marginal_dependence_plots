@@ -5,8 +5,8 @@ library(nnet) #figure out how to use this thing...
 
 ####
 full_dnames <- c("abalone", "ankara", "baseballsalary", "compactiv", "cpu", "ozone", "pole", "triazine", "wine_red", "wine_white")
-dnames = c("baseballsalary","wine_red", "cpu", "ozone","ankara","wine_white")
-#dnames = "wine_white"
+#dnames = c("baseballsalary","wine_red", "ozone","ankara","wine_white")
+dnames = c("ozone","ankara","wine_white")
 dataset_dir = "/home/alex/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
 studyDir = "/home/alex/workspace/advanced_marginal_dependence_plots/realDataStudy"
 #dataset_dir = "C:/Users/jbleich/workspace/advanced_marginal_dependence_plots/BakeoffDatasets/"
@@ -27,9 +27,9 @@ getFormula <- function(dframe){
 datasetPics = function(dataset,picturedir){
 	
 	X = dataset[,-1]; 
-	for(i in 1:ncol(X)){
-		X[,i] = as.numeric(X[,i])
-	}
+	#for(i in 1:ncol(X)){
+	#	X[,i] = as.numeric(X[,i])
+	#}
 	y = dataset[,1]
 	predictors = names(X)
 	N = nrow(X)
@@ -98,7 +98,7 @@ datasetPics = function(dataset,picturedir){
 			#with quantiles now
 			par(mfrow=c(1,3))
 			plot(pad_study[[this_mod]][[amdp_name]], frac_to_plot=frac_to_plot, plot_pdp=TRUE, x_quantile=TRUE,
-						main=paste("q","pred_name",":",this_mod,sep=" "))
+						main=paste("q",pred_name,":",this_mod,sep=" "))
 			plot(pad_study[[this_mod]][[amdp_name]],centered=TRUE,centered_percentile=0.01,frac_to_plot=frac_to_plot, x_quantile=TRUE)
 			plot(pad_study[[this_mod]][[damdp_name]],frac_to_plot=frac_to_plot,plot_sd=TRUE,plot_dpdp=TRUE, x_quantile=TRUE)
 

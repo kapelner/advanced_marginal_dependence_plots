@@ -30,18 +30,40 @@ data(BostonHousing); X=BostonHousing[,-14]
 #build real rf
 rf_mod = randomForest(medv~.,BostonHousing)
 
+
+########## rm
 #real amdp
 rm = amdp(rf_mod, predictor="rm", X=X, frac_to_build=1)
 
 #additive backfitter model
-bf_rm = backfitter(X=X,y=BostonHousing$medv, predictor="rm", eps=.005, fitMethod=rfFit,
+bf_rm = backfitter(X=X,y=BostonHousing$medv, predictor="rm", eps=.001, fitMethod=rfFit,
                 predictfcn = rfPred, iter.max=10)
 
 #lineup test
 #frac_to_plot applies to realAmdp, which has 506 curves. bf_rm is built to 506 observations as well,
 # so the null pads are only built to .2*506 = 101 observations in bf_rm to save time. Then
 # the null pads are printed with frac_to_plot = 1 and the real one with frac_to_plot=.2
-alu_rm = additivityLineup(bf_rm, fitMethod=rfFit, figs=12, realAmdp=rm, centered=TRUE, frac_to_plot=.2)
+alu_rm = additivityLineup(bf_rm, fitMethod=rfFit, figs=12, realAmdp=rm, centered=TRUE, x_quantile=TRUE)
+
+
+######## age
+age = amdp(rf_mod, predictor="age", X=X, frac_to_build=1)
+
+#additive backfitter model
+bf_age = backfitter(X=X,y=BostonHousing$medv, predictor="age", eps=.001, fitMethod=rfFit,
+                predictfcn = rfPred, iter.max=30)
+alu_age = additivityLineup(bf_age, fitMethod=rfFit, figs=12, realAmdp=age, centered=TRUE,x_quantile=TRUE)
+
+bf_age_rm = bf_age$X
+
+######## lstat
+lstat = amdp(rf_mod, predictor="lstat", X=X, frac_to_build=1)
+
+#additive backfitter model
+bf_lstat = backfitter(X=X,y=BostonHousing$medv, predictor="lstat", eps=.001, fitMethod=rfFit,
+                predictfcn = rfPred, iter.max=30)
+alu_lstat = additivityLineup(bf_lstat, fitMethod=rfFit, figs=12, realAmdp=lstat, centered=TRUE, x_quantile=TRUE)
+
 
 #######################################################################################
 ####### Depression data (not submitted to git for privacy concerns)
