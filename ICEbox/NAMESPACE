@@ -1,0 +1,9 @@
+exportPattern("ice")
+exportPattern("dice")
+
+#some methods
+S3method(plot, ice)
+S3method(print, ice)
+S3method(summary, ice)
+S3method(plot, ice)
+

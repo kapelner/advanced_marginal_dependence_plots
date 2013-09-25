@@ -23,31 +23,31 @@ X$medv = NULL
 # build an RF with default settings:
 rf_mod = randomForest(X, y)
 
-# build the PAD:
-rf.pad = amdp(rf_mod, X, y, predictor = "age", frac_to_build = 1)
+# build the ICE object:
+rf.ice = ice(rf_mod, X, y, predictor = "age", frac_to_build = 1)
 
 # plot Friedman's PDP by making the individual curves in the PAD white
-plot(rf.pad, x_quantile = TRUE, plot_pdp = TRUE, 
+plot(rf.ice, x_quantile = TRUE, plot_pdp = TRUE, 
 		colorvec = rep("white", nrow(X)), plot_orig_pts_preds = FALSE)
 
-# plot PAD:
-plot(rf.pad, x_quantile = TRUE, plot_pdp = TRUE)
+# plot ICE:
+plot(rf.ice, x_quantile = TRUE, plot_pdp = TRUE)
 
-# plot cPAD
-plot(rf.pad, x_quantile = TRUE, plot_pdp = TRUE, centered = TRUE)
+# plot cICE
+plot(rf.ice, x_quantile = TRUE, plot_pdp = TRUE, centered = TRUE)
 
-# create the dPAD:
-rf.dpad = damdp(rf.pad)
+# create the dICE:
+rf.dice = dice(rf.ice)
 
-# plot the dPAD:
-plot(rf.dpad, x_quantile = T)
+# plot the dICE:
+plot(rf.dice, x_quantile = T)
 
 
 # Visualizing a second feature: we investigate the cPAD by coloring it by the "rm" variable.
 # first create an indicator variable:
-rf.pad$Xamdp$I_rm = ifelse(rf.pad$Xamdp$rm > 6.2, 1, 0)  
+rf.ice$Xamdp$I_rm = ifelse(rf.ice$Xamdp$rm > 6.2, 1, 0)  
 # then plot:
-plot(rf.pad, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE,  
+plot(rf.ice, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE,  
 		x_quantile = T, plot_orig_pts_preds = T, color_by = "I_rm")
 
 #######################################################################

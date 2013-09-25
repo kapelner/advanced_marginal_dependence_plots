@@ -1,0 +1,11 @@
+Package: ICEbox
+Type: Package
+Title: Tool for visualizing the fit of an arbitrary supervised learning algorithm
+Version: 0.1
+Date: 2013-07-10
+Author: Somebody
+Maintainer: <yourfault@somewhere.net>
+Description: It is cool. You shoudl use it.
+License: GPL2
+Depends: sfsmisc
+Suggests: mlbench, gbm, randomForest, nnet
