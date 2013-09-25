@@ -183,7 +183,7 @@ ice = function(object, X, y,
 		range_y = max(y) - min(y)
 	}else{
 		range_y = (max(ice_curves) - min(ice_curves))
-		cat("y not passed, so range_y is range of amdps\n")
+		cat("y not passed, so range_y is range of ice curves\n")
 	}
 
 	#compute friedman's pdp:
@@ -192,7 +192,7 @@ ice = function(object, X, y,
     predictfcn=NULL
   }
 	ice_obj = list(ice_curves = ice_curves, gridpts = grid_pts, predictor = predictor, xj = xj, actual_prediction = actual_predictions, 
-			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xamdp = X, pdp = pdp,
+			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xice = X, pdp = pdp,
 			indices_to_build = indices_to_build, frac_to_build = frac_to_build, predictfcn = predictfcn) 
 	class(ice_obj) = "ice"
 		

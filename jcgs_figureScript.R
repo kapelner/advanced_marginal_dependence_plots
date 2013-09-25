@@ -3,7 +3,7 @@
 # cannot currently be made public.
 
 ### load R packages
-library(amdp)
+library(ICEbox)
 library(randomForest)
 library(gam)
 library(missForest)
@@ -11,7 +11,7 @@ library(missForest)
 
 
 #######################################################################
-############ Section: "PAD Toolbox" ###################################
+############ Section: The ICE Toolbox #################################
 #######################################################################
 # load the data:
 library(MASS)
@@ -26,7 +26,7 @@ rf_mod = randomForest(X, y)
 # build the ICE object:
 rf.ice = ice(rf_mod, X, y, predictor = "age", frac_to_build = 1)
 
-# plot Friedman's PDP by making the individual curves in the PAD white
+# plot Friedman's PDP by making the individual curves in the ICE white
 plot(rf.ice, x_quantile = TRUE, plot_pdp = TRUE, 
 		colorvec = rep("white", nrow(X)), plot_orig_pts_preds = FALSE)
 
@@ -54,7 +54,7 @@ plot(rf.ice, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE,
 ############ Section: "Simulations" ###################################
 #######################################################################
 
-## function to generate the 'no interactions' example:
+## Additivity Assessment
 
 noInter_ex_sim = function(n,seednum=NULL){
 	if(!is.null(seednum)){
@@ -80,12 +80,14 @@ y  = noInter_data$y
 # build gam with possible interactions:
 gam_mod = gam(y~s(x_1)+s(x_2)+s(x_1*x_2),data=Xy)   
 
-# build PAD and dPAD:
-gam_amdp = amdp(gam_mod, X, predictor = 1, frac_to_build = 1)
+# build ICE and dICE:
+gam.ice = ice(gam_mod, X, predictor = 1, frac_to_build = 1)
+gam.dice = dice(gam.ice)
 
-# plot the PDP and PAD
-plot(gam_amdp, x_quantile = F, plot_pdp = T, frac_to_plot = 0.01,colorvec=rep("WHITE",1000), plot_orig_pts=F)
-plot(gam_amdp, x_quantile = F, plot_pdp = T, frac_to_plot = 0.3)
+# plot the PDP, ICE plot, and dICE
+plot(gam.ice, x_quantile = F, plot_pdp = T, frac_to_plot = 0.01,colorvec=rep("WHITE",1000), plot_orig_pts=F) #PDP
+plot(gam.ice, x_quantile = F, plot_pdp = T, frac_to_plot = 0.3)  #ICE
+plot(gam.dice, x_quantile = F, plot_dpdp = T, frac_to_plot = 0.3) #dICE
 
 
 

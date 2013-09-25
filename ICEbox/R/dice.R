@@ -1,15 +1,15 @@
-dice = function(amdp_obj, DerivEstimator, plot = FALSE){
+dice = function(ice_obj, DerivEstimator){
 
 	#error checking:
-	if(class(amdp_obj) != "ice"){
-		stop("amdp_obj is not a valid amdp object.")
+	if(class(ice_obj) != "ice"){
+		stop("ice_obj is not a valid ice object.")
 	}
 
-	gridpts = amdp_obj$gridpts
+	gridpts = ice_obj$gridpts
 
 	if (missing(DerivEstimator)){
 		EstimatorWrapper = function(y){
-			D1tr( x = gridpts, y = supsmu(x=gridpts,y=y)$y)
+			D1tr( x = gridpts, y = supsmu(x=gridpts,y=y)$y)  #numerical derivative of supersmooth.
 		}
 	} else{
 		#argument checking???
@@ -19,28 +19,25 @@ dice = function(amdp_obj, DerivEstimator, plot = FALSE){
 	}
 
 	#compute derivatives
-	damdp_obj = amdp_obj
-	damdp_obj$d_ice_curves = t(apply(amdp_obj$ice_curves, 1, FUN = EstimatorWrapper))
-	damdp_obj$ice_curves = NULL
+	dice_obj = ice_obj
+	dice_obj$d_ice_curves = t(apply(ice_obj$ice_curves, 1, FUN = EstimatorWrapper))
+	dice_obj$ice_curves = NULL
 
 	#do it for the pdp as well.
-	damdp_obj$dpdp = EstimatorWrapper(amdp_obj$pdp)
+	dice_obj$dpdp = EstimatorWrapper(ice_obj$pdp)
 
 	#figure out point on each curve that corresponds to observed X.
-    col_idx_of_actual = c(1, 1 + cumsum(diff(amdp_obj$xj)>0))
-	row_idx = 1:nrow(damdp_obj$d_ice_curves)
+    col_idx_of_actual = c(1, 1 + cumsum(diff(ice_obj$xj)>0))
+	row_idx = 1:nrow(dice_obj$d_ice_curves)
 	actual_deriv_idx = cbind(row_idx, col_idx_of_actual)
-	damdp_obj$actual_deriv = damdp_obj$d_ice_curves[actual_deriv_idx]
+	dice_obj$actual_deriv = dice_obj$d_ice_curves[actual_deriv_idx]
 
 	#compute the sd of the derivatives at each gridpt.
-	damdp_obj$sd_deriv = apply(damdp_obj$d_ice_curves, 2, sd)
+	dice_obj$sd_deriv = apply(dice_obj$d_ice_curves, 2, sd)
 	
-	#clean up, make it of class 'damdp'	
-	damdp_obj$actual_prediction = NULL
-	class(damdp_obj) = "dice"
+	#clean up, make it of class 'dice'	
+	dice_obj$actual_prediction = NULL
+	class(dice_obj) = "dice"
 	
-	if (plot){	#if the user wants to use a default plotting, they can get the plot in one line
-		plot(damdp_obj)
-	}
-	invisible(damdp_obj)
+	invisible(dice_obj)
 }
