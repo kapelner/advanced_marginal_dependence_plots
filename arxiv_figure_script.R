@@ -74,6 +74,7 @@ plot(rf.ice, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE,
 
 
 
+
 #######################################################################
 ############ Section: Simulations #####################################
 #######################################################################
@@ -224,6 +225,7 @@ plot(rf.ice_extrap, plot_pdp=FALSE, color_by="x2_indic")
 #######################################################################
 
 
+
 #######################################################################
 ############ Section: Real Data #######################################
 #######################################################################
@@ -231,6 +233,7 @@ plot(rf.ice_extrap, plot_pdp=FALSE, color_by="x2_indic")
 ##################### Depression Clinical Data ########################
 # Examples pertaining to the depression dataset are omitted, 
 # as this data cannot currently be made public.
+
 
 ##################### White Wine ######################################
 #load the data:
@@ -277,6 +280,28 @@ plot(nn.dice, x_quantile=TRUE, frac_to_plot = frac_to_plot,
 				plot_sd = TRUE, plot_dpdp = TRUE, color_by = "al_ind")
 
 
-##################### White Wine ######################################
+################### Diabetes Classification in Pima Indians ###########
 data(Pima.te)
+X = Pima.te[,-8]
+y = Pima.te[, 8]
 
+# build rf:
+pima_rf = randomForest(x = X, y = y)
+
+## Create an ICE object for the predictor "skin":
+# For classification we plot the centered log-odds. If we pass a predict
+# function that returns fitted probabilities, setting logodds = TRUE instructs
+# the function to set each ice curve to the centered log-odds of the fitted 
+# probability.
+pima.ice = ice(pima_rf, X = X, predictor = "skin", logodds = TRUE,
+                    predictfcn = function(object, newdata){
+							predict(object, newdata, type = "prob")[, 2]
+					}
+			 )
+
+# make a c-ICE plot:
+plot(pima.ice, x_quantile = TRUE, centered = TRUE)
+
+## make a d-ICE object and plot it.
+pima.dice = dice(pima.ice)
+plot(pima.dice, x_quantile = TRUE)
