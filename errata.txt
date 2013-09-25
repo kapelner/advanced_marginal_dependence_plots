@@ -1,2 +1,1 @@
 - MAN files bitches.
-- change the function names, both internally and externally.
