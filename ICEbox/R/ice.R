@@ -1,5 +1,5 @@
 ice = function(object, X, y,
-		predictor, predictfcn, newdata, 
+		predictor, predictfcn, 
 		verbose = TRUE, frac_to_build = 1, indices_to_build = NULL, 
 		num_grid_pts, logodds = F, ...){
 
@@ -124,7 +124,6 @@ ice = function(object, X, y,
 			actual_predictions[(actual_predictions == 0)] = .5 * second_lowest
 		}
 		actual_predictions = log(actual_predictions) - (1 / 2) * (log(actual_predictions) + log(1 - actual_predictions))
-		 
 	}
 	
 	#renamed from 'ice_curves'
@@ -192,7 +191,7 @@ ice = function(object, X, y,
     predictfcn=NULL
   }
 	ice_obj = list(ice_curves = ice_curves, gridpts = grid_pts, predictor = predictor, xj = xj, actual_prediction = actual_predictions, 
-			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, N = N, range_y = range_y, Xice = X, pdp = pdp,
+			logodds = logodds, xlab = xlab, nominal_axis = nominal_axis, range_y = range_y, Xice = X, pdp = pdp,
 			indices_to_build = indices_to_build, frac_to_build = frac_to_build, predictfcn = predictfcn) 
 	class(ice_obj) = "ice"
 		
