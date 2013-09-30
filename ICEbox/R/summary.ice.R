@@ -1,3 +1,3 @@
-summary.ice = function(ice_obj){
-	print(ice_obj)
+summary.dice = function(dice_obj){
+	print(dice_obj)
 }
