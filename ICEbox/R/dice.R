@@ -37,6 +37,9 @@ dice = function(ice_obj, DerivEstimator){
 	
 	#clean up, make it of class 'dice'	
 	dice_obj$actual_prediction = NULL
+	dice_obj$predictfcn = NULL
+	dice_obj$frac_to_build = NULL
+	dice_obj$indices_to_build = NULL
 	class(dice_obj) = "dice"
 	
 	invisible(dice_obj)
