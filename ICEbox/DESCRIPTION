@@ -6,7 +6,7 @@ Date: 2013-10-01
 Author: Alex Goldstein, Adam Kapelner, Justin Bleich
 Maintainer: <kapelner@wharton.upenn.edu>
 Description: This package implements ideas that extend the PDP by considering the functional relationship between the predicted response and a given feature for individual observations.
-License: MIT
+License:  GPL-2 | GPL-3
 Depends: sfsmisc
 Suggests: mlbench, gbm, randomForest, nnet, gam, MASS
 
