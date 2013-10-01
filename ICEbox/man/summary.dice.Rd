@@ -7,12 +7,15 @@ Summary function for \code{dice} objects.
 Calls \code{print} and prints a brief summary of a \code{dice} object.
 }
 \usage{
-summary.dice(object)
+\method{summary}{dice}(object,...)
 }
 
 \arguments{
   \item{object}{
 Object of class \code{dice}.
+}
+  \item{...}{
+Ignored for now.
 }
 }
 

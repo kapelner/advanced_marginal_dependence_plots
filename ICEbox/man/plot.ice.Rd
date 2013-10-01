@@ -1,4 +1,5 @@
 \name{plot.ice}
+\alias{plot.ice}
 \title{
 Plotting of \code{ice} objects.
 }
@@ -6,15 +7,15 @@ Plotting of \code{ice} objects.
 Plotting of \code{ice} objects.
 }
 \usage{
-plot.ice(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, 
+\method{plot}{ice}(x, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, 
      pts_preds_size = 1.5, colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = TRUE,
      plot_new_data = FALSE, centered = FALSE, rug = TRUE, prop_range_y = TRUE,
      centered_percentile = 0.01, ...)
 }
 
 \arguments{
-  \item{ice_obj}{
-Object to plot.
+  \item{x}{
+Object of class \code{ice} to plot.
 }
   \item{plot_margin}{
 Extra margin to pass to \code{ylim} as a fraction of the range of \code{ice_obj$ice_curves}.

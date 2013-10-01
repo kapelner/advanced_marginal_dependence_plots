@@ -1,4 +1,5 @@
 \name{print.dice}
+\alias{print.dice}
 \title{
 Print method for \code{dice} objects.
 }
@@ -6,12 +7,15 @@ Print method for \code{dice} objects.
 Prints a summary of a \code{dice} object.
 }
 \usage{
-print.dice(x)
+\method{print}{dice}(x,...)
 }
 
 \arguments{
   \item{x}{
 Object of class \code{dice}.
+}
+  \item{...}{
+Ignored for now.
 }
 }
 

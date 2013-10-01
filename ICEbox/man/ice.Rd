@@ -7,7 +7,7 @@ Creates an object of class \code{ice}.
 \description{
 Creates an \code{ice} object with individual conditional expectation curves
 for the passed model object, \code{X} matrix, predictor, and response.  See
-... for further details.
+Goldstein et al for further details.
 }
 \usage{
 ice(object, X, y, predictor, predictfcn, verbose = TRUE, frac_to_build = 1, 
@@ -98,8 +98,8 @@ of how the PDP is a form of post-processing.}
 \item{predictfcn}{Same as the argument, see argument description.}
 }
 \references{
-See ... for an explanation and the full algorithm.  Note \code{X[,predictor]} \code{X[,-predictor]} 
-correspond to x_S and x_C in the paper respectively.
+A Goldstein, A Kapelner, J Bleich and E Pitkin. Peeking Inside the Black Box: Visualizing Statistical
+Learning with Plots of Individual Conditional Expectation. ArXiv e-prints, 2013.
 }
 
 \seealso{

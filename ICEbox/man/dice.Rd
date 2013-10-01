@@ -1,9 +1,11 @@
 \name{dice}
+\alias{dice}
 \title{
 Creates an object of class \code{dice}.
 }
 \description{
 Estimates the partial derivative function for each curve in an \code{ice} object.
+See Goldstein et al for further details.
 }
 \usage{
 dice(ice_obj, DerivEstimator)
@@ -46,10 +48,8 @@ estimated derivatives of the centered log-odds.}
 
 }
 \references{
-See... section ..
-}
-\author{
-%%  ~~who you are~~
+A Goldstein, A Kapelner, J Bleich and E Pitkin. Peeking Inside the Black Box: Visualizing Statistical
+Learning with Plots of Individual Conditional Expectation. ArXiv e-prints, 2013.
 }
 
 \seealso{

@@ -5,17 +5,17 @@
 Plotting of \code{dice} objects.
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+Plotting of \code{dice} objects.
 }
 \usage{
-plot.dice(dice_obj, plot_margin = 0.05, frac_to_plot = 1, 
+\method{plot}{dice}(x, plot_margin = 0.05, frac_to_plot = 1, 
       plot_sd = TRUE, plot_orig_pts_deriv = TRUE, pts_preds_size = 1.5, 
       colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = TRUE, 
       plot_new_data = FALSE, rug = TRUE, ...)
 }
 \arguments{
-  \item{dice_obj}{
-Object to be plotted.
+  \item{x}{
+Object of class \code{dice} to plot.
 }
   \item{plot_margin}{
 Extra margin to pass to \code{ylim} as a fraction of the range of \code{ice_obj$ice_curves}.
@@ -69,9 +69,6 @@ A list with the following elements.
   \item{legend_text}{If the \code{color_by} argument was used, 
 		a legend describing the map between the \code{color_by} predictor
         and curve colors.}
-}
-\references{
-%% ~put references to the literature/web site here ~
 }
 
 \seealso{
