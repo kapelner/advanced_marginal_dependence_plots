@@ -1,3 +1,3 @@
-summary.dice = function(dice_obj){
-	print(dice_obj)
+summary.dice = function(object, ...){
+	print(object, ...)
 }

@@ -1,28 +1,29 @@
-plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, pts_preds_size = 1.5,
+plot.ice = function(x, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, pts_preds_size = 1.5,
 					colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = TRUE, plot_new_data = FALSE, 
 					centered = FALSE, rug = TRUE, prop_range_y = TRUE, centered_percentile = 0.01, ...){
 	
 	DEFAULT_COLORVEC = c("green", "red", "blue", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
+	#think of x as x. needs to be 'x' to match R's generic.
 
 	#list of passed arguments, including the ...
-#	arg_list = as.list(match.call(expand.dots = TRUE))
+	#arg_list = as.list(match.call(expand.dots = TRUE))
 
 	#some argument checking
-	if (class(ice_obj) != "ice"){ 
+	if (class(x) != "ice"){ 
 		stop("object is not of class \"ice\"")
 	}
 	if (frac_to_plot <= 0 || frac_to_plot > 1 ){
 		stop("frac_to_plot must be in (0,1]")
 	}
 	#extract the grid and lines to plot	
-	grid = ice_obj$gridpts 
+	grid = x$gridpts 
 	n_grid = length(grid)
 	ecdf_fcn = NULL
 	if (x_quantile){
 		ecdf_fcn = ecdf(grid)
 		grid = ecdf_fcn(grid)
 	}
-	ice_curves = ice_obj$ice_curves
+	ice_curves = x$ice_curves
 	N = nrow(ice_curves)
 
 	#### figure out the colorvec.
@@ -46,15 +47,15 @@ plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts
 			stop("color_by must be a column name in X or a column index")
 		}
 		if(class(color_by) == "character"){
-			if(!(color_by %in% names(ice_obj$Xice))){
+			if(!(color_by %in% names(x$Xice))){
 				stop("The predictor name given by color_by was not found in the X matrix")
 			}
 		} else{  #check numeric
-			if( color_by < 1 || color_by > ncol(ice_obj$Xice) || (color_by%%1 !=0)){
+			if( color_by < 1 || color_by > ncol(x$Xice) || (color_by%%1 !=0)){
 				stop("color_by must be a column name in X or a column index")
 			}
 		}
-		x_color_by = ice_obj$Xice[, color_by]
+		x_color_by = x$Xice[, color_by]
 		x_unique = unique(x_color_by)
 		num_x_color_by = length(x_unique)		
 		
@@ -121,7 +122,7 @@ plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts
   
 	#get the xlabel if it wasn't already passed explicitly.
 	if( is.null(arg_list$xlab)){
-		xlab = ice_obj$xlab
+		xlab = x$xlab
     arg_list = modifyList(arg_list, list(xlab = xlab))
 	}
 	if (x_quantile){
@@ -135,7 +136,7 @@ plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts
 	
 	#same for y label
 	if( is.null(arg_list$ylab)){	
-		if (ice_obj$logodds){
+		if (x$logodds){
 			ylab = "partial log-odds"
 			arg_list = modifyList(arg_list, list(ylab = ylab))
 		} else {
@@ -146,7 +147,7 @@ plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts
 
 	#set xact if not passed explicitly 
 	if( is.null(arg_list$xaxt) ){
-		xaxt = ifelse(ice_obj$nominal_axis, "n", "s")
+		xaxt = ifelse(x$nominal_axis, "n", "s")
 		arg_list = modifyList(arg_list, list(xaxt = xaxt))
 	}
 
@@ -167,15 +168,15 @@ plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts
 	do.call("plot", arg_list)
   
   
-	if (ice_obj$nominal_axis){
-		axis(1, at = sort(ice_obj$xj), labels = sort(ice_obj$xj))
+	if (x$nominal_axis){
+		axis(1, at = sort(x$xj), labels = sort(x$xj))
 	}	
 	if (centered && prop_range_y){
 		at = seq(min(ice_curves), max(ice_curves), length.out = 5)
 		#we need to organize it so it's at zero
 		at = at - min(abs(at))
 		
-		labels = round(at / ice_obj$range_y, 2)
+		labels = round(at / x$range_y, 2)
 		axis(4, at = at, labels = labels)
 	}
 	
@@ -184,15 +185,15 @@ plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts
 	}
 
 	if (plot_orig_pts_preds){ #indicate the fitted values associated with observed xj values
-		yhat_actual = ice_obj$actual_prediction[plot_points_indices]
+		yhat_actual = x$actual_prediction[plot_points_indices]
 		if (centered){
 			yhat_actual = yhat_actual - centering_vector
 		}
 				
 		if (x_quantile){
-			xj = ecdf_fcn(ice_obj$xj)[plot_points_indices]
+			xj = ecdf_fcn(x$xj)[plot_points_indices]
 		} else {
-			xj = ice_obj$xj[plot_points_indices]
+			xj = x$xj[plot_points_indices]
 		}
 		for (i in 1 : length(xj)){
 			points(xj[i], yhat_actual[i], col = "black", pch = 16, cex = pts_preds_size)
@@ -201,13 +202,13 @@ plot.ice = function(ice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts
 	}
 	
 	if (rug && !x_quantile){
-		rug(ice_obj$xj)	
+		rug(x$xj)	
 	}	
 	
 	#if plot_pdp is true, plot actual pdp (in the sense of Friedman '01)
 	#Ensure this is done after all other plotting so nothing obfuscates the PDP
 	if (plot_pdp){
-		pdp = ice_obj$pdp
+		pdp = x$pdp
 		if (centered){
 #			ice_curves[, ceiling(ncol(ice_curves) * centered_percentile + 0.00001)]
 			pdp = pdp - pdp[ceiling(length(pdp) * centered_percentile + 0.00001)]

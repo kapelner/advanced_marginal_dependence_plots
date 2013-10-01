@@ -1,7 +1,7 @@
-plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = TRUE, plot_orig_pts_deriv = TRUE,
+plot.dice = function(x, plot_margin = 0.05, frac_to_plot = 1, plot_sd = TRUE, plot_orig_pts_deriv = TRUE,
  						pts_preds_size = 1.5, colorvec, color_by = NULL, x_quantile = FALSE, plot_dpdp = TRUE, plot_new_data = FALSE, 
 						rug = TRUE, ...){
-	
+	#think of x as 'dice_obj'
 	DEFAULT_COLORVEC = c("green", "red", "blue", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
 	arg_list = list(...)
 
@@ -9,7 +9,7 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 #	arg_list = as.list(match.call(expand.dots = TRUE))
 
 	#some argument checking
-	if (class(dice_obj) != "dice"){ 
+	if (class(x) != "dice"){ 
 		stop("object is not of class 'dice'")
 	}
 	if (frac_to_plot <= 0 || frac_to_plot > 1 ){
@@ -20,14 +20,14 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 	}
 	
 	#extract the grid and lines to plot	
-	grid = dice_obj$gridpts 
+	grid = x$gridpts 
 	n_grid = length(grid)
 	ecdf_fcn = NULL
 	if (x_quantile){
 		ecdf_fcn = ecdf(grid)
 		grid = ecdf_fcn(grid)
 	}
-	d_ice_curves = dice_obj$d_ice_curves
+	d_ice_curves = x$d_ice_curves
 	N = nrow(d_ice_curves)
 
 	#### figure out the colorvec.
@@ -51,15 +51,15 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 			stop("color_by must be a column name in X or a column index")
 		}
 		if(class(color_by) == "character"){
-			if(!(color_by %in% names(dice_obj$Xice))){
+			if(!(color_by %in% names(x$Xice))){
 				stop("The predictor name given by color_by was not found in the X matrix")
 			}
 		} else{  #check numeric
-			if( color_by < 1 || color_by > ncol(dice_obj$Xice) || (color_by%%1 !=0)){
+			if( color_by < 1 || color_by > ncol(x$Xice) || (color_by%%1 !=0)){
 				stop("color_by must be a column name in X or a column index")
 			}
 		}
-		x_color_by = dice_obj$Xice[, color_by]
+		x_color_by = x$Xice[, color_by]
 		x_unique = unique(x_color_by)
 		num_x_color_by = length(x_unique)		
 		
@@ -123,7 +123,7 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
   
 	#get the xlabel if it wasn't already passed explicitly.
 	if( is.null(arg_list$xlab)){
-		xlab = dice_obj$xlab
+		xlab = x$xlab
    		 arg_list = modifyList(arg_list, list(xlab = xlab))
 	}
 	if (x_quantile){
@@ -137,7 +137,7 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 	
 	#same for y label
 	if( is.null(arg_list$ylab)){	
-		if (dice_obj$logodds){
+		if (x$logodds){
 			ylab = "partial log-odds"
 			arg_list = modifyList(arg_list, list(ylab = ylab))
 		} else {
@@ -148,14 +148,14 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 
 	#set xact if not passed explicitly 
 	if( is.null(arg_list$xaxt) ){
-		xaxt = ifelse(dice_obj$nominal_axis, "n", "s")
+		xaxt = ifelse(x$nominal_axis, "n", "s")
 		arg_list = modifyList(arg_list, list(xaxt = xaxt))
 	}
 
 	#set ylim if not passed explicitly
 	if( is.null(arg_list$ylim) ){
 		if(plot_sd){
-			offset = 1.5 * max(dice_obj$sd_deriv)
+			offset = 1.5 * max(x$sd_deriv)
 			ylim = c(min_dice - offset, max_dice)	
 		}else{
 			ylim = c(min_dice, max_dice) 
@@ -168,22 +168,14 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 		arg_list = modifyList(arg_list, list(type = type))
 	}
 
-  	#plot all the prediction lines
-	# 	plot(grid, d_ice_curves[1, ], 
-	# 			type = type, 
-	# 			ylim = ylim, 
-	# 			xlab = xlab, 
-	# 			ylab = ylab, 
-	# 			xaxt = xaxt, 
-	# 			...)
 
 	## if plot_sd = TRUE, set up the layout to have
     ## the dpdp above and the sd plot below.
 	do.call("plot", arg_list)
   
   
-	if (dice_obj$nominal_axis){
-		axis(1, at = sort(dice_obj$xj), labels = sort(dice_obj$xj))
+	if (x$nominal_axis){
+		axis(1, at = sort(x$xj), labels = sort(x$xj))
 	}	
 	
 	for (i in 1 : nrow(d_ice_curves)){
@@ -191,12 +183,12 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 	}
 
 	if (plot_orig_pts_deriv){ #indicate the fitted values associated with observed xj values
-		deriv_actual = dice_obj$actual_deriv[plot_points_indices]
+		deriv_actual = x$actual_deriv[plot_points_indices]
 				
 		if (x_quantile){
-			xj = ecdf_fcn(dice_obj$xj)[plot_points_indices]
+			xj = ecdf_fcn(x$xj)[plot_points_indices]
 		} else {
-			xj = dice_obj$xj[plot_points_indices]
+			xj = x$xj[plot_points_indices]
 		}
 		for (i in 1 : length(xj)){
 			points(xj[i], deriv_actual[i], col = "black", pch = 16, cex = pts_preds_size)
@@ -207,7 +199,7 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 
 	#if plot_dpdp is true, plot actual dpdp (in the sense of Friedman '01)
 	if (plot_dpdp){
-		friedman_dpdp = dice_obj$dpdp
+		friedman_dpdp = x$dpdp
 		
 		#calculate the line thickness based on how many lines there are
 		num_lines = length(plot_points_indices)
@@ -217,19 +209,19 @@ plot.dice = function(dice_obj, plot_margin = 0.05, frac_to_plot = 1, plot_sd = T
 	}
 	
 	if (rug && !x_quantile){
-		rug(dice_obj$xj)	
+		rug(x$xj)	
 	}
 
 	#do the sd plot if required.
 	if (plot_sd){
 		abline(h = ylim[1] + offset, col = rgb(0.8,0.8,0.8))
-		at = seq(ylim[1], ylim[1] + max(dice_obj$sd_deriv), length.out = 2)	
+		at = seq(ylim[1], ylim[1] + max(x$sd_deriv), length.out = 2)	
 
-		labels = round(seq(0, max(dice_obj$sd_deriv), length.out = 2), 2)
+		labels = round(seq(0, max(x$sd_deriv), length.out = 2), 2)
 		axis(4, at = at, labels = labels)
 		mtext("sd(deriv)", side = 4,line = 0.5)
 
-		points(x= grid, y = (dice_obj$sd_deriv+ylim[1]),type='l')
+		points(x= grid, y = (x$sd_deriv+ylim[1]),type='l')
 	}
 		
 	if (is.null(legend_text)){
