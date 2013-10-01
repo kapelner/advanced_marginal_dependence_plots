@@ -1,4 +1,4 @@
-export(ice, dice)
+export(ice, dice, clusterICE)
 
 #some methods
 S3method(plot, ice)
