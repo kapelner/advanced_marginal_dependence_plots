@@ -1,5 +1,5 @@
 clusterICE = function(ice_obj, nClusters, plot = TRUE, plot_margin = 0.05, colorvec, plot_pdp = FALSE,
-			x_quantile = FALSE, avg_lwd = 3, prop_range_y = FALSE, centered = FALSE, plot_legend = FALSE, ...){
+			x_quantile = FALSE, avg_lwd = 3, centered = FALSE, plot_legend = FALSE, ...){
 
 	DEFAULT_COLORVEC = c("green", "red", "blue", "black", "green", "yellow", "pink", "orange", "forestgreen", "grey")
 	
@@ -73,24 +73,43 @@ clusterICE = function(ice_obj, nClusters, plot = TRUE, plot_margin = 0.05, color
 			points(grid, cluster_centers[center_to_plot, ], col = colorvec[i], type = "l", 
 					lwd = cluster_size[center_to_plot] * total_line_width)
 		}
-		
-		if (prop_range_y){
-			at = seq(min(curves), max(curves), length.out = 5)
-			#we need to organize it so it's at zero
-			at = at - min(abs(at))
-			
-			labels = round(at / ice_obj$range_y, 2)
-			axis(4, at = at, labels = labels)
-		}
+				
+		if(plot_pdp){  
+			# this is done after all other plotting so nothing obfuscates the PDP
+			if(objclass == "ice"){
+				pdp = ice_obj$pdp
+			}
+			else{
+				pdp = ice_obj$dpdp #really want the dpdp
+			}
+			#now mean center it:
+			pdp = pdp - mean(pdp)
+
+			#if centered=TRUE, start everything at 0.
+			if(centered){
+				pdp = pdp - pdp[1]
+			}		
+
+			#calculate the line thickness based on how many lines there are
+			#every add'l cluster we get 0.5 more highlight up to 8
+			points(grid, pdp, col = "yellow", type = "l", lwd = min(4 +  nClusters*0.5, 5),8)  #yellow
+			points(grid, pdp, col = "BLACK", type = "l", lwd = 3, lty=3)  #black, dotted.
+		}#end of pdp
+
+		#if (prop_range_y){
+		#	at = seq(min(curves), max(curves), length.out = 5)
+		#	#we need to organize it so it's at zero
+		#	at = at - min(abs(at))
+		#	
+		#	labels = round(at / ice_obj$range_y, 2)
+		#	axis(4, at = at, labels = labels)
+		#}
 		
 		if (ice_obj$nominal_axis){
 			axis(1, at = sort(ice_obj$xj), labels = sort(ice_obj$xj))
 		}
-		
-		if(plot_pdp){  ## do this too.
-			
-		}
 
+	
 		#legend
 		if (plot_legend){
 			#fix ordering

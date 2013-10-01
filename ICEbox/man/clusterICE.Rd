@@ -10,7 +10,7 @@ and then kmeans is applied to the curves with the specified number of clusters.
 \usage{
 clusterICE(ice_obj, nClusters, plot = TRUE, plot_margin = 0.05, 
            colorvec, plot_pdp = FALSE, x_quantile = FALSE, 
-           avg_lwd = 3, prop_range_y = FALSE, centered = FALSE, 
+           avg_lwd = 3, centered = FALSE, 
            plot_legend = FALSE, ...)
 }
 
@@ -36,12 +36,18 @@ Optional vector of colors to use for each cluster.
 }
 
 \item{plot_pdp}{
-If \code{TRUE}, the PDP is plotted and highlighted in yellow.
+If \code{TRUE}, the PDP (\code{ice} object) or d-PDP (\code{dice} object) 
+is plotted with a dotted black line and highlighted in yellow.
 }
 
 \item{x_quantile}{
 If \code{TRUE}, the plot is drawn with the x-axis taken to be \code{quantile(gridpts)}. If \code{FALSE},
 the predictor's original scale is used.
+}
+
+\item{avg_lwd}{
+Average line width to use when plotting the cluster means.  Line width is proportional to the cluster's
+size.
 }
 
 \item{centered}{
@@ -84,6 +90,6 @@ bh.ice = ice(object = bh_rf, X = X, y = y, predictor = "age",
 clusterICE(bh.ice, nClusters = 2, plot_legend = TRUE)
 
 ## cluster the curves into 3 groups, start all at 0.
-clusterICE(bh.ice, nClusters = 2, plot_legend = TRUE, center = TRUE)
+clusterICE(bh.ice, nClusters = 3, plot_legend = TRUE, center = TRUE)
 }
 }
