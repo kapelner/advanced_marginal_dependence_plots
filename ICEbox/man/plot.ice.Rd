@@ -9,7 +9,7 @@ Plotting of \code{ice} objects.
 \usage{
 \method{plot}{ice}(x, plot_margin = 0.05, frac_to_plot = 1, plot_orig_pts_preds = TRUE, 
      pts_preds_size = 1.5, colorvec, color_by = NULL, x_quantile = FALSE, plot_pdp = TRUE,
-     plot_new_data = FALSE, centered = FALSE, rug = TRUE, prop_range_y = TRUE,
+     centered = FALSE, rug = TRUE, prop_range_y = TRUE,
      centered_percentile = 0.01, ...)
 }
 
@@ -35,10 +35,10 @@ Size of points to make if \code{plot_origin_pts_preds} is \code{TRUE}.
 Optional vector of colors to use for each curve.
 }
   \item{color_by}{
-Optional variable name (or column number) to color curves by. If \code{color_by} has 10 or fewer
-unique values, a discrete set of colors is used for each value and a legend is printed (and returned).
-If there are more values, curves are colored from light to dark corresponding to low to high values of
-\code{color_by}.
+Optional variable name (or column number) in \code{Xice} to color curves by. If the \code{color_by}
+variable has 10 or fewer unique values, a discrete set of colors is used for each value and a legend is 
+printed and returned. If there are more values, curves are colored from light to dark corresponding 
+to low to high values of the variable specified by \code{color_by}.
 }
   \item{x_quantile}{
 If \code{TRUE}, the plot is drawn with the x-axis taken to be \code{quantile(gridpts)}. If \code{FALSE},
@@ -47,12 +47,9 @@ the predictor's original scale is used.
   \item{plot_pdp}{
 If \code{TRUE}, the PDP is plotted and highlighed in yellow.
 }
-  \item{plot_new_data}{
-Adam??
-}
   \item{centered}{
 If \code{TRUE}, all curves are re-centered to be 0 at the quantile given by \code{centered_percentile}.
-See ... for details. If \code{FALSE}, the original \code{ice_curves} are plotted. 
+See Goldstein et al for details and examples. If \code{FALSE}, the original \code{ice_curves} are plotted. 
 }
   \item{rug}{
 If \code{TRUE}, marks are drawn on the x-axis indicating the presence of actual observed values.
@@ -60,7 +57,8 @@ Forced to \code{FALSE} when \code{x_quantile} is set to \code{TRUE}.
 }
   \item{prop_range_y}{
 When \code{TRUE} and \code{centered=TRUE} as well, the right vertical axis displays the
-centered values as a fraction of the response's range.  See ... for details.
+centered values as a fraction of the response's range.  See Goldstein et al for details
+and examples.
 }
   \item{centered_percentile}{
 The percentile of \code{predictor} for which all \code{ice_curves} are set to be 0.

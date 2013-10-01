@@ -12,24 +12,24 @@ dice(ice_obj, DerivEstimator)
 }
 \arguments{
   \item{ice_obj}{
-Object of class \code{ice}. This function generages partial derivatie 
+Object of class \code{ice}. This function generages partial derivative 
 estimates for each row in \code{ice$ice_curves}.
 }
   \item{DerivEstimator}{
 Optional function with a single argument \code{y}.  Returns the estimated 
 partial derivative a function sampled at the points (\code{ice_obj$gridpts},\code{y}).
 If ommited, the default (a) smooths (\code{ice_obj$gridpts},\code{y}) using
-\code{supsmu} and then (b) uses the \code{D1tr} ("discrete first derivative using simple difference ratios")
-function found in Package \code{sfsmisc} to estimate the derivative.
+\code{supsmu} and then (b) uses the \code{D1tr} function ("discrete 
+first derivative using simple difference ratios")  found in the \code{sfsmisc}
+package to estimate the derivative.
 }
 }
 \value{
-A list of class 'dice' with the following elements. Most are passed directly through
+A list of class \code{dice} with the following elements. Most are passed directly through
 from \code{ice_object} and exist to enable various plotting facilities.
 
 \item{d_ice_curves}{Matrix of dimension \code{nrow(Xice)} by \code{length(gridpts)}.
-Each row corresponds to an observation's d-ICE curve, estimated at the values of \code{predictor} set to the values specified by 
-\code{gridpts}.}
+Each row corresponds to an observation's d-ICE curve, estimated at the values of \code{predictor} in \code{gridpts}.}
 \item{gridpts}{Passed from \code{ice_object}.}
 \item{predictor}{Passed from \code{ice_object}.}
 \item{xj}{The actual values of \code{predictor} observed in the data in the order
@@ -49,7 +49,9 @@ estimated derivatives of the centered log-odds.}
 }
 \references{
 A Goldstein, A Kapelner, J Bleich and E Pitkin. Peeking Inside the Black Box: Visualizing Statistical
-Learning with Plots of Individual Conditional Expectation. ArXiv e-prints, 2013.
+Learning with Plots of Individual Conditional Expectation. ArXiv e-prints, 2013. \cr
+
+Martin Maechler et al. sfsmisc: Utilities from Seminar fuer Statistik ETH Zurich. R package version 1.0-24.
 }
 
 \seealso{

@@ -54,13 +54,13 @@ to build ICE curves for. As this is an alternative to setting \code{frac_to_buil
 cannot be specified.
 }
   \item{num_grid_pts}{
-Optional number of values in the range of \code{predictor} at which to estimate each curve (that is,
-the values of ). If missing, the curves are estimated at the unique values of \code{predictor} 
+Optional number of values in the range of \code{predictor} at which to estimate each curve. 
+If missing, the curves are estimated at the unique values of \code{predictor} 
 in the \code{X} observations we estimate ICE curves for.
 }
   \item{logodds}{
-For classification () creates PDPs by plotting the centered log-odds of implied by the fitted 
-probabilities. If \code{logodds=TRUE} we assume that the generic or passed predict function 
+If \code{TRUE}, for classification creates PDPs by plotting the centered log-odds of implied by the fitted 
+probabilities. We assume that the generic or passed predict function 
 returns probabilities, and so the flag tells us to transform these to centered logits after 
 the predictions are generated. 
 }
@@ -71,7 +71,7 @@ the predictions are generated.
 \value{
 A list of class \code{ice} with the following elements.
 \item{ice_curves}{Matrix of dimension \code{nrow(Xice)} by \code{length(gridpts)}.
-Each row corresponds to an observation's ICE curve, estimated at the values of \code{predictor} set to the values specified by 
+Each row corresponds to an observation's ICE curve, estimated at the values of \code{predictor} in 
 \code{gridpts}.}
 \item{gridpts}{Sorted values of \code{predictor} at which each curve is estimated. Duplicates
 are removed -- by definition elements of \code{gridpts} are unique.}
@@ -91,19 +91,22 @@ When \code{TRUE} the \code{plot} function treats the x-axis differently.}
 Observations are ordered to be increasing in \code{predictor}.  This ordering is the same one 
 as in \code{ice_curves}, \code{xj}, \code{actual_predictions}, meaning for all these objects
 the \code{i}-th element refers to the same observation in \code{X}.}
-\item{pdp}{The PDP corresponding to the estimated ice_curves, see ... for a discussion
-of how the PDP is a form of post-processing.}
+\item{pdp}{The PDP corresponding to the estimated ice_curves, see Goldstein et al for a discussion
+of how the PDP is a form of post-processing. See Friedman (2001) for a description of PDPs.}
 \item{indices_to_build}{Same as the argument, see argument description.}
 \item{frac_to_build}{Same as the argument, see argument description.}
 \item{predictfcn}{Same as the argument, see argument description.}
 }
 \references{
+Jerome Friedman. Greedy Function Approximation: A Gradient Boosting Machine. The Annals
+of Statistics, 29(5):1189–1232, 2001. \cr
+
 A Goldstein, A Kapelner, J Bleich and E Pitkin. Peeking Inside the Black Box: Visualizing Statistical
 Learning with Plots of Individual Conditional Expectation. ArXiv e-prints, 2013.
 }
 
 \seealso{
-plot.ice, cluster.ice
+plot.ice, print.ice, summary.ice
 }
 \examples{
 \dontrun{

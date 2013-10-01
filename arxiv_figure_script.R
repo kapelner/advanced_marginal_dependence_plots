@@ -156,7 +156,7 @@ ntree = gbm.perf(gbm_mod, method = "cv")
 
 # Create and plot ICE object:
 # To predict with the cross-validated number of trees, we pass a custom predict function
-gbm.ice = ice(gbm_mod, X, predictor = 2, 
+gbm.ice = ice(gbm_mod, X, predictor = "x_2", 
 			predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)},
 			frac_to_build = 1)
 
