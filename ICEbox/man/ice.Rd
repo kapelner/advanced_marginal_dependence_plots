@@ -98,8 +98,8 @@ of how the PDP is a form of post-processing. See Friedman (2001) for a descripti
 \item{predictfcn}{Same as the argument, see argument description.}
 }
 \references{
-Jerome Friedman. Greedy Function Approximation: A Gradient Boosting Machine. The Annals
-of Statistics, 29(5):1189–1232, 2001. \cr
+Jerome Friedman. Greedy Function Approximation: A Gradient Boosting Machine. The Annals of Statistics,
+29(5):1189-1232, 2001.
 
 A Goldstein, A Kapelner, J Bleich and E Pitkin. Peeking Inside the Black Box: Visualizing Statistical
 Learning with Plots of Individual Conditional Expectation. ArXiv e-prints, 2013.
