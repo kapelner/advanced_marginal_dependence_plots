@@ -1,5 +1,4 @@
-exportPattern("ice")
-exportPattern("dice")
+export(ice, dice)
 
 #some methods
 S3method(plot, ice)
