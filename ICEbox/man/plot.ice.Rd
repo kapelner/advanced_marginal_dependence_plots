@@ -77,9 +77,6 @@ A list with the following elements.
 		a legend describing the map between the \code{color_by} predictor
         and curve colors.}
 }
-\references{
-references.
-}
 
 \seealso{
 ice
