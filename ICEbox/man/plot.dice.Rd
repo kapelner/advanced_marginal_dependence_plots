@@ -49,7 +49,7 @@ If \code{TRUE}, the plot is drawn with the x-axis taken to be \code{quantile(gri
 the predictor's original scale is used.
 }
   \item{plot_dpdp}{
-If \code{TRUE}, the estimated derivative of the PDP is plotted and highlighed in yellow.
+If \code{TRUE}, the estimated derivative of the PDP is plotted and highlighted in yellow.
 }
   \item{rug}{
 If \code{TRUE}, marks are drawn on the x-axis indicating the presence of actual observed values.
@@ -85,10 +85,10 @@ X$medv = NULL
 bhd_rf_mod = randomForest(X, y)
 
 ## Create an 'ice' object for the predictor "age":
-bh.ice = ice(object = bhd_rf_mod, X = X, y = y, predictor = "age", frac_to_build = .1) 
+bhd.ice = ice(object = bhd_rf_mod, X = X, y = y, predictor = "age", frac_to_build = .1) 
 
 # estimate derivatives, then plot.
-bh.dice = dice(bh.ice)
-plot(bh.dice)
+bhd.dice = dice(bhd.ice)
+plot(bhd.dice)
 }
 }

@@ -45,7 +45,7 @@ If \code{TRUE}, the plot is drawn with the x-axis taken to be \code{quantile(gri
 the predictor's original scale is used.
 }
   \item{plot_pdp}{
-If \code{TRUE}, the PDP is plotted and highlighed in yellow.
+If \code{TRUE}, the PDP is plotted and highlighted in yellow.
 }
   \item{centered}{
 If \code{TRUE}, all curves are re-centered to be 0 at the quantile given by \code{centered_percentile}.
@@ -61,7 +61,7 @@ centered values as a fraction of the response's range.  See Goldstein et al (201
 and examples.
 }
   \item{centered_percentile}{
-The percentile of \code{predictor} for which all \code{ice_curves} are set to be 0.
+The percentile of \code{predictor} for which all \code{ice_curves} are "pinched together" and set to be 0.
 Default is .01.
 }
   \item{\dots}{
@@ -91,24 +91,26 @@ y = X$medv
 X$medv = NULL
 
 ## build a RF:
-bh_rf = randomForest(X, y)
+bhd_rf_mod = randomForest(X, y)
 
 ## Create an 'ice' object for the predictor "age":
-bh.ice = ice(object = bh_rf, X = X, y = y, predictor = "age",
+bhd.ice = ice(object = bhd_rf_mod, X = X, y = y, predictor = "age",
             frac_to_build = .1) 
 
 ## plot
-plot(rf.ice, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1) 
+plot(bhd.ice, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1) 
 
 ## centered plot
-plot(rf.ice, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1
+plot(bhd.ice, x_quantile = TRUE, plot_pdp = TRUE, frac_to_plot = 1
             centered = TRUE) 
 
 ## color the curves by high and low values of 'rm'.
-# First create an indicator variable:
-rf.ice$Xice$I_rm = ifelse(rf.ice$Xice$rm > 6.2, 1, 0)  
+# First create an indicator variable which is 1 if the number of 
+# rooms is greater than the median:
+median_rm = median(X$rm)
+bhd.ice$Xice$I_rm = ifelse(bhd.ice$Xice$rm > median_rm, 1, 0)  
 
-plot(rf.ice, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE,  
+plot(bhd.ice, frac_to_plot = 1, centered = TRUE, prop_range_y = TRUE,  
             x_quantile = T, plot_orig_pts_preds = T, color_by = "I_rm")
 }
 }

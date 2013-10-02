@@ -125,7 +125,7 @@ X$medv = NULL
 bhd_rf_mod = randomForest(X, y)
 
 ## Create an 'ice' object for the predictor "age":
-bh.ice = ice(object = bhd_rf_mod, X = X, y = y, predictor = "age", frac_to_build = .1) 
+bhd.ice = ice(object = bhd_rf_mod, X = X, y = y, predictor = "age", frac_to_build = .1) 
 
 #### classification example
 data(Pima.te)  #Pima Indians diabetes classification
