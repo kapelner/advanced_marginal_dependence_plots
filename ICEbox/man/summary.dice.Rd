@@ -4,17 +4,17 @@
 Summary function for \code{dice} objects.
 }
 \description{
-Calls \code{print} and prints a brief summary of a \code{dice} object.
+Alias of \code{print} method.
 }
 \usage{
-\method{summary}{dice}(object,...)
+\method{summary}{dice}(object, ...)
 }
 
 \arguments{
   \item{object}{
 Object of class \code{dice}.
 }
-  \item{...}{
+\item{...}{
 Ignored for now.
 }
 }

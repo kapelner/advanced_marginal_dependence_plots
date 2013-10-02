@@ -4,16 +4,16 @@
 Summary function for \code{ice} objects.
 }
 \description{
-Calls \code{print} and prints a brief summary of an \code{ice} object.
+Alias of \code{print} method.
 }
 \usage{
-\method{summary}{ice}(object,...)
+\method{summary}{ice}(object, ...)
 }
 \arguments{
   \item{object}{
 Object of class \code{ice}.
 }
-  \item{...}{
+\item{...}{
 Ignored for now.
 }
 }

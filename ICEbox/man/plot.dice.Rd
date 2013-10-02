@@ -2,7 +2,7 @@
 \alias{plot.dice}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Plotting of \code{dice} objects.
+Create a plot of a \code{dice} object.
 }
 \description{
 Plotting of \code{dice} objects.
@@ -25,8 +25,7 @@ If \code{frac_to_plot} is less than 1, randomly plot \code{frac_to_plot} fractio
 curves in \code{ice_obj$ice_curves}.
 }
   \item{plot_sd}{
-If \code{TRUE}, below the derivative plots, the cross-observation sd of partial derivatives
-is plotted at each gridpoint.
+If \code{TRUE}, plot the cross-observation sd of partial derivatives below the derivative plots.
 }
   \item{plot_orig_pts_deriv}{
 If \code{TRUE}, marks each curve at the location of the derivative estimate at the
@@ -83,11 +82,10 @@ y = X$medv
 X$medv = NULL
 
 ## build a RF:
-bh_rf = randomForest(X, y)
+bhd_rf_mod = randomForest(X, y)
 
 ## Create an 'ice' object for the predictor "age":
-bh.ice = ice(object = bh_rf, X = X, y = y, predictor = "age",
-            frac_to_build = .1) 
+bh.ice = ice(object = bhd_rf_mod, X = X, y = y, predictor = "age", frac_to_build = .1) 
 
 # estimate derivatives, then plot.
 bh.dice = dice(bh.ice)

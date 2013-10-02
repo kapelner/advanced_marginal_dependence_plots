@@ -4,17 +4,17 @@
 Print method for \code{ice} objects.
 }
 \description{
-Prints a summary of an \code{ice} object.
+Prints a short summary of an \code{ice} object.
 }
 \usage{
-\method{print}{ice}(x,...)
+\method{print}{ice}(x, ...)
 }
 
 \arguments{
   \item{x}{
 Object of class \code{ice}.
 }
-  \item{...}{
+	\item{...}{
 Ignored for now.
 }
 }

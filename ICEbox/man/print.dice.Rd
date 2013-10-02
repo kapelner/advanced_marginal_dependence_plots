@@ -7,16 +7,14 @@ Print method for \code{dice} objects.
 Prints a summary of a \code{dice} object.
 }
 \usage{
-\method{print}{dice}(x,...)
+\method{print}{dice}(x, ...)
 }
 
 \arguments{
   \item{x}{
 Object of class \code{dice}.
 }
-  \item{...}{
+	\item{...}{
 Ignored for now.
 }
 }
-
-

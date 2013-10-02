@@ -25,7 +25,7 @@ If \code{frac_to_plot} is less than 1, randomly plot \code{frac_to_plot} fractio
 curves in \code{ice_obj$ice_curves}.
 }
   \item{plot_orig_pts_preds}{
-If \code{TRUE}, marks each curve at the location of the observation's actual fitted value. If \code{FALSE}
+If \code{TRUE}, marks each curve at the location of the observation's actual fitted value. If \code{FALSE},
 no mark is drawn.
 }
   \item{pts_preds_size}{
@@ -49,7 +49,7 @@ If \code{TRUE}, the PDP is plotted and highlighed in yellow.
 }
   \item{centered}{
 If \code{TRUE}, all curves are re-centered to be 0 at the quantile given by \code{centered_percentile}.
-See Goldstein et al for details and examples. If \code{FALSE}, the original \code{ice_curves} are plotted. 
+See Goldstein et al (2013) for details and examples. If \code{FALSE}, the original \code{ice_curves} are plotted. 
 }
   \item{rug}{
 If \code{TRUE}, marks are drawn on the x-axis indicating the presence of actual observed values.
@@ -57,7 +57,7 @@ Forced to \code{FALSE} when \code{x_quantile} is set to \code{TRUE}.
 }
   \item{prop_range_y}{
 When \code{TRUE} and \code{centered=TRUE} as well, the right vertical axis displays the
-centered values as a fraction of the response's range.  See Goldstein et al for details
+centered values as a fraction of the response's range.  See Goldstein et al (2013) for details
 and examples.
 }
   \item{centered_percentile}{

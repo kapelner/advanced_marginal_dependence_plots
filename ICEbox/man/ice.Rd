@@ -7,7 +7,7 @@ Creates an object of class \code{ice}.
 \description{
 Creates an \code{ice} object with individual conditional expectation curves
 for the passed model object, \code{X} matrix, predictor, and response.  See
-Goldstein et al for further details.
+Goldstein et al (2013) for further details.
 }
 \usage{
 ice(object, X, y, predictor, predictfcn, verbose = TRUE, frac_to_build = 1, 
@@ -30,7 +30,7 @@ of predicted values is used and a warning is printed.
 }
   \item{predictor}{
 The column number or variable name in \code{X} of the predictor of interest, 
-(\code{x_S} in ...).
+(\eqn{x_S = X[, j]}{x_S= X[, j]}).
 }
   \item{predictfcn}{
 Optional function that accepts two arguments, \code{object} and \code{newdata}, and
@@ -49,13 +49,13 @@ observations' values of \code{predictor} are evenly spaced throughout the quanti
 full \code{X[,predictor]} vector.  
 }
   \item{indices_to_build}{
-Vector of indices, each element between \code{1} and \code{nrow(X)} specifying which observations
+Vector of indices, \eqn{\subset \{1, \ldots, N\}}{each element between \code{1} and \code{nrow(X)}} specifying which observations
 to build ICE curves for. As this is an alternative to setting \code{frac_to_build}, both 
 cannot be specified.
 }
   \item{num_grid_pts}{
 Optional number of values in the range of \code{predictor} at which to estimate each curve. 
-If missing, the curves are estimated at the unique values of \code{predictor} 
+If missing, the curves are estimated at each unique value of \code{predictor} 
 in the \code{X} observations we estimate ICE curves for.
 }
   \item{logodds}{
@@ -65,41 +65,42 @@ returns probabilities, and so the flag tells us to transform these to centered l
 the predictions are generated. 
 }
   \item{\dots}{
-	Other arguments to be passed to \code{object}'s generic predict function.  
+Other arguments to be passed to \code{object}'s generic predict function.  
 }
 }
 \value{
 A list of class \code{ice} with the following elements.
-\item{ice_curves}{Matrix of dimension \code{nrow(Xice)} by \code{length(gridpts)}.
+\item{gridpts}{Sorted values of \code{predictor} at which each curve is estimated. Duplicates
+are removed -- by definition, elements of \code{gridpts} are unique.}
+\item{ice_curves}{Matrix of dimension \code{N} by \code{length(gridpts)}.
 Each row corresponds to an observation's ICE curve, estimated at the values of \code{predictor} in 
 \code{gridpts}.}
-\item{gridpts}{Sorted values of \code{predictor} at which each curve is estimated. Duplicates
-are removed -- by definition elements of \code{gridpts} are unique.}
-\item{predictor}{Same as the argument, see argument description.}
 \item{xj}{The actual values of \code{predictor} observed in the data in the order
 of \code{Xice}.}
-\item{actual_predictions}{Vector of length \code{nrow(Xice)} containing the model's 
+\item{actual_predictions}{Vector of length \code{N} containing the model's 
 predictions at the actual value of the predictors in the order of \code{Xice}.}
-\item{logodds}{Same as the argument, see argument description.}
 \item{xlab}{String with the predictor name corresponding to \code{predictor}. If \code{predictor}
-is a column number, \code{xlab} is set to \code{colnames(X)[,predictor]}.}
+is a column number, \code{xlab} is set to \code{colnames(X)[, predictor]}.}
 \item{nominal_axis}{If \code{TRUE}, \code{length(gridpts)} is 5 or fewer; otherwise \code{FALSE}.
-When \code{TRUE} the \code{plot} function treats the x-axis differently.}
-\item{range_y}{If \code{y} was passed, the range of the response.  Otherwise 
-\code{max(ice_curves)-min(ice_curves)}.}
+When \code{TRUE} the \code{plot} function treats the x-axis as if x is nominal.}
+\item{range_y}{If \code{y} was passed, the range of the response.  Otherwise it is defaulted to be
+\code{max(ice_curves)-min(ice_curves)} and a message is printed to console.}
 \item{Xice}{A matrix containing the subset of \code{X} for which ICE curves are estimated. 
 Observations are ordered to be increasing in \code{predictor}.  This ordering is the same one 
-as in \code{ice_curves}, \code{xj}, \code{actual_predictions}, meaning for all these objects
+as in \code{ice_curves}, \code{xj} and \code{actual_predictions}, meaning for all these objects
 the \code{i}-th element refers to the same observation in \code{X}.}
-\item{pdp}{The PDP corresponding to the estimated ice_curves, see Goldstein et al for a discussion
+\item{pdp}{A vector of size \code{length(gridpts)} which is a numerical approximation to the partial 
+dependence function (PDP) corresponding to the estimated ice_curves. See Goldstein et al (2013) for a discussion
 of how the PDP is a form of post-processing. See Friedman (2001) for a description of PDPs.}
+\item{predictor}{Same as the argument, see argument description.}
+\item{logodds}{Same as the argument, see argument description.}
 \item{indices_to_build}{Same as the argument, see argument description.}
 \item{frac_to_build}{Same as the argument, see argument description.}
 \item{predictfcn}{Same as the argument, see argument description.}
 }
 \references{
 Jerome Friedman. Greedy Function Approximation: A Gradient Boosting Machine. The Annals of Statistics,
-29(5):1189-1232, 2001.
+29(5): 1189-1232, 2001.
 
 A Goldstein, A Kapelner, J Bleich and E Pitkin. Peeking Inside the Black Box: Visualizing Statistical
 Learning with Plots of Individual Conditional Expectation. ArXiv e-prints, 2013.
@@ -121,27 +122,26 @@ y = X$medv
 X$medv = NULL
 
 ## build a RF:
-bh_rf = randomForest(X, y)
+bhd_rf_mod = randomForest(X, y)
 
 ## Create an 'ice' object for the predictor "age":
-bh.ice = ice(object = bh_rf, X = X, y = y, predictor = "age",
-                    frac_to_build = .1) 
-
+bh.ice = ice(object = bhd_rf_mod, X = X, y = y, predictor = "age", frac_to_build = .1) 
 
 #### classification example
 data(Pima.te)  #Pima Indians diabetes classification
-X = Pima.te[,-8]
-y = Pima.te[, 8]
+y = Pima.te$type
+X = Pima.te
+X$type = NULL
 
 ## build a RF:
-pima_rf = randomForest(x = X, y = y)
+pima_rf_mod = randomForest(x = X, y = y)
 
 ## Create an 'ice' object for the predictor "skin":
 # For classification we plot the centered log-odds. If we pass a predict
 # function that returns fitted probabilities, setting logodds = TRUE instructs
 # the function to set each ice curve to the centered log-odds of the fitted 
 # probability.
-pima.ice = ice(object = pima_rf, X = X, predictor = "skin", logodds = TRUE,
+pima.ice = ice(object = pima_rf_mod, X = X, predictor = "skin", logodds = TRUE,
                     predictfcn = function(object, newdata){ 
                          predict(object, newdata, type = "prob")[, 2]
                     }
