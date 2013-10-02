@@ -4,7 +4,7 @@
 Print method for \code{ice} objects.
 }
 \description{
-Prints a short summary of an \code{ice} object.
+Prints a summary of an \code{ice} object.
 }
 \usage{
 \method{print}{ice}(x, ...)

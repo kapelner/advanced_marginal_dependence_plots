@@ -18,11 +18,11 @@ Plotting of \code{ice} objects.
 Object of class \code{ice} to plot.
 }
   \item{plot_margin}{
-Extra margin to pass to \code{ylim} as a fraction of the range of \code{ice_obj$ice_curves}.
+Extra margin to pass to \code{ylim} as a fraction of the range of \code{x$ice_curves}.
 }
   \item{frac_to_plot}{
 If \code{frac_to_plot} is less than 1, randomly plot \code{frac_to_plot} fraction of the
-curves in \code{ice_obj$ice_curves}.
+curves in \code{x$ice_curves}.
 }
   \item{plot_orig_pts_preds}{
 If \code{TRUE}, marks each curve at the location of the observation's actual fitted value. If \code{FALSE},

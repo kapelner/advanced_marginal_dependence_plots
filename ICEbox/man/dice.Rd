@@ -13,11 +13,11 @@ dice(ice_obj, DerivEstimator)
 \arguments{
   \item{ice_obj}{
 Object of class \code{ice}. This function generates partial derivative 
-estimates for each row in \code{ice$ice_curves}.
+estimates for each row in \code{ice_obj$ice_curves}.
 }
   \item{DerivEstimator}{
 Optional function with a single argument \code{y}.  Returns the estimated 
-partial derivative a function sampled at the points (\code{ice_obj$gridpts},\code{y}).
+partial derivative of a function sampled at the points (\code{ice_obj$gridpts},\code{y}).
 If omitted, the default (a) smooths (\code{ice_obj$gridpts},\code{y}) using
 \code{supsmu} and then (b) uses the \code{D1tr} function ("discrete 
 first derivative using simple difference ratios")  found in the \code{sfsmisc}

@@ -39,7 +39,7 @@ If this argument is not passed, the procedure attempts to find a generic \code{p
 function corresponding to \code{class(object)}.
 }
   \item{verbose}{
-If \code{TRUE}, prints message about the procedure's progress.
+If \code{TRUE}, prints messages about the procedure's progress.
 }
   \item{frac_to_build}{
 Number between 0 and 1, with 1 as default.  For large \code{X} matrices or fitted models
@@ -49,8 +49,7 @@ observations' values of \code{predictor} are evenly spaced throughout the quanti
 full \code{X[,predictor]} vector.  
 }
   \item{indices_to_build}{
-Vector of indices, \eqn{\subset \{1, \ldots, N\}}{each element between \code{1} and \code{nrow(X)}} specifying which observations
-to build ICE curves for. As this is an alternative to setting \code{frac_to_build}, both 
+Vector of indices, \eqn{\subset \{1, \ldots, nrow(X)\}}{each element between \code{1} and \code{nrow(X)}} specifying which observations to build ICE curves for. As this is an alternative to setting \code{frac_to_build}, both 
 cannot be specified.
 }
   \item{num_grid_pts}{
@@ -72,25 +71,25 @@ Other arguments to be passed to \code{object}'s generic predict function.
 A list of class \code{ice} with the following elements.
 \item{gridpts}{Sorted values of \code{predictor} at which each curve is estimated. Duplicates
 are removed -- by definition, elements of \code{gridpts} are unique.}
-\item{ice_curves}{Matrix of dimension \code{N} by \code{length(gridpts)}.
+\item{ice_curves}{Matrix of dimension \code{nrow(X)} by \code{length(gridpts)}.
 Each row corresponds to an observation's ICE curve, estimated at the values of \code{predictor} in 
 \code{gridpts}.}
 \item{xj}{The actual values of \code{predictor} observed in the data in the order
 of \code{Xice}.}
-\item{actual_predictions}{Vector of length \code{N} containing the model's 
+\item{actual_predictions}{Vector of length \code{nrow(X)} containing the model's 
 predictions at the actual value of the predictors in the order of \code{Xice}.}
 \item{xlab}{String with the predictor name corresponding to \code{predictor}. If \code{predictor}
 is a column number, \code{xlab} is set to \code{colnames(X)[, predictor]}.}
 \item{nominal_axis}{If \code{TRUE}, \code{length(gridpts)} is 5 or fewer; otherwise \code{FALSE}.
 When \code{TRUE} the \code{plot} function treats the x-axis as if x is nominal.}
 \item{range_y}{If \code{y} was passed, the range of the response.  Otherwise it is defaulted to be
-\code{max(ice_curves)-min(ice_curves)} and a message is printed to console.}
+\code{max(ice_curves)-min(ice_curves)} and a message is printed to the console.}
 \item{Xice}{A matrix containing the subset of \code{X} for which ICE curves are estimated. 
 Observations are ordered to be increasing in \code{predictor}.  This ordering is the same one 
 as in \code{ice_curves}, \code{xj} and \code{actual_predictions}, meaning for all these objects
 the \code{i}-th element refers to the same observation in \code{X}.}
 \item{pdp}{A vector of size \code{length(gridpts)} which is a numerical approximation to the partial 
-dependence function (PDP) corresponding to the estimated ice_curves. See Goldstein et al (2013) for a discussion
+dependence function (PDP) corresponding to the estimated ICE curves. See Goldstein et al (2013) for a discussion
 of how the PDP is a form of post-processing. See Friedman (2001) for a description of PDPs.}
 \item{predictor}{Same as the argument, see argument description.}
 \item{logodds}{Same as the argument, see argument description.}

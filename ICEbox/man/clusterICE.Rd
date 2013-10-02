@@ -1,7 +1,7 @@
 \name{clusterICE}
 \alias{clusterICE}
 \title{
-Clustering if ICE and d-ICE curves by kmeans.
+Clustering of ICE and d-ICE curves by kmeans.
 }
 \description{
 Clustering if ICE and d-ICE curves by kmeans. All curves are centered to have mean 0
@@ -16,7 +16,7 @@ clusterICE(ice_obj, nClusters, plot = TRUE, plot_margin = 0.05,
 
 \arguments{
   \item{ice_obj}{
-Object of class \code{ice} of \code{dice} to cluster.
+Object of class \code{ice} or \code{dice} to cluster.
 }
 
 \item{nClusters}{
@@ -28,7 +28,7 @@ If \code{TRUE}, plots the clusters.
 }
 
 \item{plot_margin}{
-Extra margin to pass to \code{ylim} as a fraction of the range of the range of the clusters.
+Extra margin to pass to \code{ylim} as a fraction of the range of cluster centers.
 }
 
 \item{colorvec}{

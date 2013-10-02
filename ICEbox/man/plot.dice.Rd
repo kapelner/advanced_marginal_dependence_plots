@@ -18,11 +18,11 @@ Plotting of \code{dice} objects.
 Object of class \code{dice} to plot.
 }
   \item{plot_margin}{
-Extra margin to pass to \code{ylim} as a fraction of the range of \code{ice_obj$ice_curves}.
+Extra margin to pass to \code{ylim} as a fraction of the range of \code{x$d_ice_curves}.
 }
   \item{frac_to_plot}{
 If \code{frac_to_plot} is less than 1, randomly plot \code{frac_to_plot} fraction of the
-curves in \code{ice_obj$ice_curves}.
+curves in \code{x$d_ice_curves}.
 }
   \item{plot_sd}{
 If \code{TRUE}, plot the cross-observation sd of partial derivatives below the derivative plots.
@@ -33,7 +33,7 @@ location of \code{predictor} actually occurring in the data. If \code{FALSE}
 no mark is drawn.
 }
   \item{pts_preds_size}{
-Size of points to make if \code{plot_origin_pts_deriv} is \code{TRUE}.
+Size of points to make if \code{plot_orig_pts_deriv} is \code{TRUE}.
 }
   \item{colorvec}{
 Optional vector of colors to use for each curve.
