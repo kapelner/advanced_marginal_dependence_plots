@@ -1,4 +1,4 @@
-library(amdp)
+library(ICEbox)
 library(randomForest)
 library(gbm)
 
@@ -29,8 +29,8 @@ lm_mod = lm(y ~ x_1 + x_2 + x_2 : x_3, data = Xy)
 summary(lm_mod)
 
 #Figure 1a
-lm_amdp_obj = amdp(lm_mod, as.data.frame(X), predictor = 2, frac_to_build = 1)
-plot.amdp(lm_amdp_obj, plot_pdp=T, pts_preds_size = 1.5, frac_to_plot = 0.1, color_by = 3)
+lm_amdp_obj = ice(lm_mod, as.data.frame(X), predictor = 2, frac_to_build = 1)
+plot(lm_amdp_obj, plot_pdp=T, pts_preds_size = 1.5, frac_to_plot = 0.1, color_by = 3)
 
 
 
@@ -67,8 +67,8 @@ gbm_mod = gbm(y ~ ., data = Xy, n.tree = 500, interaction.depth = 3, shrinkage =
 ntree = gbm.perf(gbm_mod, method = "cv")
 summary(gbm_mod)
 
-amdp_obj_gbm = amdp(gbm_mod, X, predictor = 2, predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, frac_to_build = 1)
-plot.amdp(amdp_obj_gbm, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
+ice_obj_gbm = ice(gbm_mod, X, predictor = 2, predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, frac_to_build = 1)
+plot(ice_obj_gbm, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1, colorvec = colorvec)
 
 
 #### Additive model; demonstrates cascade of colors, blue to black

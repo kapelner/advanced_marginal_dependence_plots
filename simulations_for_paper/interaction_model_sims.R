@@ -48,11 +48,11 @@ for(i in 1:100){
 	cat(i); cat(" ")
 }
 
-amdp_obj_rf = amdp(rf_mod, X, predictor = 3, frac_to_build = 0.5)
+ice_obj_rf = ice(rf_mod, X, predictor = 3, frac_to_build = 0.5)
 
 #plot only 10% of curves with quantiles, actual pdp, and original points. 
-plot(amdp_obj_rf, x_quantile = F, plot_pdp = T, frac_to_plot = 0.5)
-cluster_amdp(amdp_obj_rf, nClusters = 2)
+plot(ice_obj_rf, x_quantile = F, plot_pdp = T, frac_to_plot = 0.5)
+clusterICE(ice_obj_rf, nClusters = 2)
 
 ##gbm
 
@@ -63,12 +63,12 @@ summary(gbm_mod)
 #summary(lm_mod)
 
 
-amdp_obj_gbm = amdp(gbm_mod, X, y = y, predictor = 3, predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, frac_to_build = 1)
-damdp_obj_gbm = damdp(amdp_obj_gbm)
+ice_obj_gbm = ice(gbm_mod, X, y = y, predictor = 3, predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)}, frac_to_build = 1)
+damdp_obj_gbm = damdp(ice_obj_gbm)
 
 windows()
-plot(amdp_obj_gbm, plot_pdp = T, frac_to_plot = 0.01)
-cluster_amdp(amdp_obj_gbm, nClusters = 2)
+plot(ice_obj_gbm, plot_pdp = T, frac_to_plot = 0.01)
+cluster_amdp(ice_obj_gbm, nClusters = 2)
 
 windows()
 plot(damdp_obj_gbm, plot_sd = T, frac_to_plot = 0.05, x_quantile=T, rug = F)
