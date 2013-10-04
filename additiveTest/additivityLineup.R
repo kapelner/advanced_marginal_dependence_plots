@@ -56,6 +56,7 @@ null_predictfcn,...){
   frac_to_build_null = 1
 
   if(!is.null(arg_list$frac_to_plot)){
+    frac_to_plot = arg_list$frac_to_plot
     warning_msg = paste("'frac_to_plot' only applies to plotting 'realICE'.",
     "'frac_to_build' is set in null ICEs to ensure the same number of curves are plotted for null and real plots.",sep="\n")  
     warning(warning_msg)
@@ -87,38 +88,37 @@ null_predictfcn,...){
 	null_additive_fits = list()
 	null_ices = list()
   
-  #figure out frac_to_build in nulls so that when we 
-  
 	for(i in 1:(figs-1)){
 		response = additive_fit + sample(additive_res, size=length(additive_res), replace = F)
 		new_fit = fitMethod(X=backfit_obj$X, y=response)
 		null_additive_fits[[i]] = new_fit
-    if(is.null(null_predictfcn)){ #no predictfcn found, use generic
-  		null_ices[[i]] = ice(new_fit, X=backfit_obj$X, predictor=predictor, y = backfit_obj$y,
-							frac_to_build=frac_to_build_null)
-    }else{
-      null_ices[[i]] = ice(new_fit, X=backfit_obj$X, predictor=predictor, y = backfit_obj$y, 
-                             frac_to_build=frac_to_build_null, predictfcn = null_predictfcn)
-    }
+
+		if(is.null(null_predictfcn)){ #no predictfcn found, use generic
+	  		null_ices[[i]] = ice(new_fit, X=backfit_obj$X, predictor=predictor, y = backfit_obj$y,
+								frac_to_build=frac_to_build_null)
+		}else{
+		  null_ices[[i]] = ice(new_fit, X=backfit_obj$X, predictor=predictor, y = backfit_obj$y, 
+		                         frac_to_build=frac_to_build_null, predictfcn = null_predictfcn)
+		}
     
-    ### keep track of min and max. 
-    if(!is.null(centered) && centered==TRUE){  #keep track of range after centered
+		### keep track of min and max. 
+		if(!is.null(centered) && centered==TRUE){  #keep track of range after centered
 
-      centering_vector = null_ices[[i]]$ice_curves[, ceiling(ncol(null_ices[[i]]$ice_curves) * centered_percentile + 0.00001)]
-      rg = range(null_ices[[i]]$ice_curves - centering_vector) #range for centered plot
-    }
-    else{  #regular pre-centered range
-      rg = range(null_ices[[i]]$ice_curves)      
-    }
+		  centering_vector = null_ices[[i]]$ice_curves[, ceiling(ncol(null_ices[[i]]$ice_curves) * centered_percentile + 0.00001)]
+		  rg = range(null_ices[[i]]$ice_curves - centering_vector) #range for centered plot
+		}
+		else{  #regular pre-centered range
+		  rg = range(null_ices[[i]]$ice_curves)      
+		}
 
-    #update min range and max range
-    if(rg[1] < icecurve_min){
-        icecurve_min = rg[1]
-    }
-    if(rg[2] > icecurve_max){
-        icecurve_max = rg[2]
-    }
-    cat("Finished null ice ",i,"\n")
+		#update min range and max range
+		if(rg[1] < icecurve_min){
+		    icecurve_min = rg[1]
+		}
+		if(rg[2] > icecurve_max){
+		    icecurve_max = rg[2]
+		}
+		cat("Finished null ice ",i,"\n")
 	} #end loop through null ices
   
 	#graphics
@@ -127,12 +127,12 @@ null_predictfcn,...){
 	par(mfrow=c(num_plot_rows, num_plot_cols))
 	par(cex=.3)
 	par(mar=c(0.13,0.13,0.13,0.13))
-  ylim = c(icecurve_min,icecurve_max)
+    ylim = c(icecurve_min,icecurve_max)
   
-  #argument list for the null plots.
-  null_arg_list = arg_list
-  null_arg_list$ylim = ylim
-  null_arg_list$frac_to_plot = 1
+   #argument list for the null plots.
+   null_arg_list = arg_list
+   null_arg_list$ylim = ylim
+   null_arg_list$frac_to_plot = 1
   
 	#randomly place the real plot somewhere...
 	where_to_place = sample(1:figs,1)
@@ -155,12 +155,12 @@ null_predictfcn,...){
 			plotted_truth = TRUE
 		}
 		else{
-      		null_arg_list$ice_obj = null_ices[[idx_to_plot]]
+      		null_arg_list$x = null_ices[[idx_to_plot]] #generic plot has argument 'x'
 			if(!missing(colorvecfcn)){
 				colors = colorvecfcn(null_ices[[idx_to_plot]])
 				null_arg_list$colorvec = colors
 			}
-      		do.call(plot.ice, null_arg_list)
+      		do.call(plot, null_arg_list) 
 		}
 	}
   al_obj = list(location=where_to_place, null_additive_fits = null_additive_fits, 

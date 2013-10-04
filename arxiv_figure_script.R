@@ -120,10 +120,9 @@ interaction_ex_sim = function(n,seednum=NULL){
 		set.seed(seednum)
 	}
 
-	p = 2
+	p = 3
 	X = matrix(runif(n * p, -1, 1), ncol = p)		
-	X = cbind(X, rbinom(n, 1, 0.5)) #indicator variable
-	colnames(X) = paste("x_", 1 : (p + 1), sep = "")
+	colnames(X) = paste("x_", 1 : p , sep = "")
 
 	#coefficients dependent on level of x_3:
 	bbeta1 = as.matrix(c(0.2, 5, 0))
@@ -132,7 +131,7 @@ interaction_ex_sim = function(n,seednum=NULL){
 	#now generate y
 	y = array(NA, n)
 	for (i in 1 : n){
-		if (X[i, 3] == 1){
+		if (X[i, 3] >= 0 ){
 			y[i] = X[i, ] %*% bbeta1
 		} else {
 			y[i] = X[i, ] %*% bbeta2
@@ -156,16 +155,16 @@ ntree = gbm.perf(gbm_mod, method = "cv")
 
 # Create and plot ICE object:
 # To predict with the cross-validated number of trees, we pass a custom predict function
-gbm.ice = ice(gbm_mod, X, predictor = "x_2", 
+gbm.ice = ice(gbm_mod, X, predictor = "x_3", 
 			predictfcn = function(object, newdata){predict(object, newdata, n.tree = ntree)},
 			frac_to_build = 1)
 
-#plot only 10% of curves with quantiles, actual pdp, and original points. 
-plot(gbm.ice, x_quantile = F, plot_pdp = T, frac_to_plot = 0.1)
+#plot only 5% of curves with quantiles, actual pdp, and original points. 
+plot(gbm.ice, x_quantile = F, plot_pdp = T, frac_to_plot = 0.05)
 
 # Create and plot d-ICE object:
 gbm.dice = dice(gbm.ice)
-plot(gbm.dice)
+plot(gbm.dice, plot_orig_pts_deriv = FALSE)
 
 #################### Extrapolation Detection ##########################
 #function that generates simulated data:
@@ -305,3 +304,80 @@ plot(pima.ice, x_quantile = TRUE, centered = TRUE)
 ## make a d-ICE object and plot it.
 pima.dice = dice(pima.ice)
 plot(pima.dice, x_quantile = TRUE)
+
+
+#######################################################################
+############ Section: Additivity Lineup ###############################
+#######################################################################
+
+### 1) source the functions:
+source("additivityLineup.R"); source("backfitter.R")
+
+### 2) load the data:
+data(WhiteWine) 
+X = WhiteWine[,-1]
+y = WhiteWine$quality
+predictors = names(X)
+pred_name = "pH" 
+
+### 3) preliminary functions:
+# The standardization means we need to be careful about standardizing
+# with and without pH.
+# all:
+X_std = scale(x = X, center = T, scale = T)
+X_center = attributes(X_std)$`scaled:center`  
+X_scale = attributes(X_std)$`scaled:scale`
+
+# without pH (pH is 9th col):
+X_std_noPH = scale(x = X[,-9], center = T, scale = T)
+X_center_noPH = attributes(X_std_noPH)$`scaled:center`  
+X_scale_noPH = attributes(X_std_noPH)$`scaled:scale`  
+
+# Simlarly, we need a predict function for backfitting as per null (no pH):
+nn_predictfcn = function(object, newdata){ #for backfitting, one col removed from std
+  X_std = scale(newdata, center = .GlobalEnv$X_center_noPH, scale = .GlobalEnv$X_scale_noPH)
+  predict(object, X_std)
+}
+
+# ... and a fit function for backfitting as per null (no pH):
+nn_Fit = function(X,y){ #for backfitting.
+  X_std = scale(X, center = .GlobalEnv$X_center_noPH, scale = .GlobalEnv$X_scale_noPH)
+  nnet(x = X_std, y = as.matrix(y), size = 3, maxit = 500, decay = 5e-4, linout = ifelse(is.factor(y), F, T))
+}
+
+# ... and finally a fit using all X.
+nn_FitFull= function(X,y){ #used for fitting full X to y whose cond. exp. is additive in g(pH) and h(other predictors).
+  X_std = scale(X, center = .GlobalEnv$X_center, scale = .GlobalEnv$X_scale)
+  nnet(x = X_std, y = as.matrix(y), size = 3, maxit = 500, decay = 5e-4, linout = ifelse(is.factor(y), F, T))
+}
+
+
+### 4) make the real ICE object.
+# fit the nnet: 
+nnet_mod = nnet(x = X_std, y = as.matrix(y), size = 3, 
+			maxit = 500, decay = 5e-4, linout = ifelse(is.factor(y), F, T))
+
+# create the ice object, with the predict function using the full scaling.
+nn_wine_ice = ice(nnet_mod, X=X, y=y, predictor = pred_name, 
+                    predictfcn = function(object, newdata){
+                          newdata_std = scale(newdata, center = .GlobalEnv$X_center, scale = .GlobalEnv$X_scale)
+                          predict(object, newdata_std)
+                    } 
+                 )
+
+### 5) backfitting.
+bf_pH = backfitter(X=X,y=y, predictor="pH", eps=.001, fitMethod=nn_Fit,
+                           predictfcn = nn_predictfcn, iter.max=30)
+
+### 6) create the lineup.
+# this function generates the coloring according to alcohol content:
+colorFcn = function(ice_obj){
+	ifelse(ice_obj$Xice$alcohol > 10, "RED", "GREEN")
+}
+
+# Lineup:
+# In the paper, the real plot is in the bottom right position, but this is randomly
+# chosen on each call.
+alu_pH = additivityLineup(bf_pH, fitMethod=nn_FitFull, figs=12, realICE=nn_wine_ice, 
+                          centered=TRUE, x_quantile=TRUE, frac_to_plot=.1,
+						  colorvecfcn=colorFcn, usecolorvecfcn_inreal=TRUE, plot_orig_pts=FALSE)
