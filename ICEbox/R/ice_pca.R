@@ -45,7 +45,6 @@ ice_pca = function(object, X, y,
     }
   }
   
-  
   ######## (2)
   N = nrow(X)
   # grid points
@@ -102,9 +101,11 @@ ice_pca = function(object, X, y,
   }
   
   # generate partials
-
+  ####                TO DO ::: FIX THE IFELSE with proper for loops
   if (use_generic){
-    actual_predictions = predict(object, ifelse(is.null(prcomp_obj),X, data.frame(predict(prcomp_obj,X)[,1:npcs])))
+    Xpred = ifelse(is.null(prcomp_obj),X, data.frame(predict(prcomp_obj,X)[,1:npcs]))
+    print(head(Xpred))
+    actual_predictions = predict(object, Xpred)
   } else {
     actual_predictions = predictfcn(object = object, newdata = ifelse(is.null(prcomp_obj),X, 
                                                                       data.frame(predict(prcomp_obj,X)[,1:npcs])))
@@ -144,8 +145,8 @@ ice_pca = function(object, X, y,
                                 ...)
     }
     else{
-      ice_curves[, t] = predictfcn(object = object, 
-                                   newdata = ifelse(is.null(prcomp_obj), X, data.frame(predict(prcomp_obj,X)[, 1:npcs]))
+      ice_curves[, t] = predictfcn(object = object,
+                                   newdata = ifelse(is.null(prcomp_obj), X, data.frame(predict(prcomp_obj,X)[, 1:npcs])))
     }
     
     if(verbose){cat(".")}			

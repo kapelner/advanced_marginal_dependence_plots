@@ -35,10 +35,6 @@ calculate_pca = function(train, test=NULL, keep_original=FALSE, scale=F, frac_va
 }
 
 library(mlbench)
-
-
-
-
 data(BostonHousing)
 bh = BostonHousing
 bh = bh[,-4]
