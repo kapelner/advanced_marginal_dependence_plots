@@ -36,7 +36,15 @@ calculate_pca = function(train, test=NULL, keep_original=FALSE, scale=F, frac_va
 
 library(mlbench)
 
+
+
+
 data(BostonHousing)
 bh = BostonHousing
 bh = bh[,-4]
-pc = calculate_pca(bh,scale=T)
+pc = prcomp(bh[1:100,-13])
+dat = data.frame(cbind(pc$x[,1:3],bh$medv[1:100])); colnames(dat)[4]="medv"
+library(randomForest)
+rf = randomForest(medv~.,dat)
+X = bh[1:100,-13]
+hope = ice_pca(object=rf,X=X,predictor="rm",prcomp_obj=pc, npcs=3)
