@@ -38,9 +38,14 @@ library(mlbench)
 data(BostonHousing)
 bh = BostonHousing
 bh = bh[,-4]
-pc = prcomp(bh[1:100,-13])
-dat = data.frame(cbind(pc$x[,1:3],bh$medv[1:100])); colnames(dat)[4]="medv"
+pc = prcomp(bh[,-13])
+npcs = 10
+dat = data.frame(cbind(pc$x[,1:npcs],bh$medv)); colnames(dat)[npcs+1]="medv"
 library(randomForest)
-rf = randomForest(medv~.,dat)
-X = bh[1:100,-13]
-hope = ice_pca(object=rf,X=X,predictor="rm",prcomp_obj=pc, npcs=3)
+rf = randomForest(medv~.,dat); rf2 = randomForest(medv~.,bh)
+X = bh[,-13]
+hope = ice_pca(object=rf,X=X,predictor="lstat",prcomp_obj=pc, npcs=npcs)
+hope2 = ice_pca(object=rf2,X=X,predictor="lstat")
+
+hope = ice_pca(object=rf,X=X,predictor="rm",prcomp_obj=pc, npcs=npcs)
+hope2 = ice_pca(object=rf2,X=X,predictor="rm")
