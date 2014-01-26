@@ -102,13 +102,16 @@ ice_pca = function(object, X, y,
   
   # generate partials
   ####                TO DO ::: FIX THE IFELSE with proper for loops
+  if(is.null(prcomp_obj)){
+    Xpred = X
+  }else{  #replace with PCs
+    Xpred = data.frame(predict(prcomp_obj,X)[,1:npcs])
+  }
+  
   if (use_generic){
-    Xpred = ifelse(is.null(prcomp_obj),X, data.frame(predict(prcomp_obj,X)[,1:npcs]))
-    print(head(Xpred))
     actual_predictions = predict(object, Xpred)
   } else {
-    actual_predictions = predictfcn(object = object, newdata = ifelse(is.null(prcomp_obj),X, 
-                                                                      data.frame(predict(prcomp_obj,X)[,1:npcs])))
+    actual_predictions = predictfcn(object = object, newdata = Xpred)
   }
   if (logodds){	
     min_pred = min(actual_predictions)
@@ -139,14 +142,15 @@ ice_pca = function(object, X, y,
   xvec_temp = X[ ,predictor]  #actual setting of this column after ordering.
   for (t in 1 : length(grid_pts)){
     X[, predictor] = grid_pts[t]
-    if (use_generic){
-      ice_curves[, t] = predict(object, 
-                                ifelse(is.null(prcomp_obj), X,  data.frame(predict(prcomp_obj,X)[, 1:npcs])),
-                                ...)
+    if(is.null(prcomp_obj)){
+      Xpred = X
+    }else{  #replace with PCs
+      Xpred = data.frame(predict(prcomp_obj,X)[,1:npcs])
     }
-    else{
-      ice_curves[, t] = predictfcn(object = object,
-                                   newdata = ifelse(is.null(prcomp_obj), X, data.frame(predict(prcomp_obj,X)[, 1:npcs])))
+    if (use_generic){
+      ice_curves[, t] = predict(object,Xpred,...)
+    }else{
+      ice_curves[, t] = predictfcn(object = object,newdata = Xpred)
     }
     
     if(verbose){cat(".")}			
